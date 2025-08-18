@@ -1,3 +1,4 @@
+
 // src/app/(store)/b/[businessId]/cart/page.tsx
 "use client";
 
@@ -32,7 +33,7 @@ interface CartPageProps {
   };
 }
 
-export default function CartPage({ params }: CartPageProps) {
+export default function CartPage({ params }: { params: { businessId: string } }) {
   const [cartItems, setCartItems] = React.useState<CartItem[]>(initialCartItems);
   const { toast } = useToast();
 
