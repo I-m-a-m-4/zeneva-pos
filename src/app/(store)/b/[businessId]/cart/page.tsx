@@ -33,7 +33,7 @@ interface CartPageProps {
   };
 }
 
-export default function CartPage({ params }: { params: { businessId: string } }) {
+export default function CartPage({ params }: CartPageProps) {
   const [cartItems, setCartItems] = React.useState<CartItem[]>(initialCartItems);
   const { toast } = useToast();
 
