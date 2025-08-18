@@ -1,11 +1,9 @@
 
 import type { Metadata } from 'next';
-import Image from 'next/image';
 import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { ArrowRight, BookOpen } from "lucide-react";
+import { BookOpen, ArrowRight } from "lucide-react";
 
 export const metadata: Metadata = {
   title: 'Zeneva Blog | Business Growth Tips for SMEs',
@@ -16,6 +14,7 @@ export const metadata: Metadata = {
     url: '/blog',
   },
 };
+
 
 export default function BlogPage() {
   return (
@@ -32,6 +31,9 @@ export default function BlogPage() {
           <BookOpen className="mx-auto h-16 w-16 text-muted-foreground opacity-50 mb-4" />
           <h2 className="text-2xl font-semibold">Content Coming Soon</h2>
           <p className="text-muted-foreground mt-2">Our blog is being updated with fresh content. Please check back later!</p>
+          <Button asChild variant="outline" className="mt-6">
+            <Link href="/">Back to Home <ArrowRight className="ml-2 h-4 w-4"/></Link>
+          </Button>
       </section>
 
     </div>
