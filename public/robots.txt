@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+# Disallow: /admin/ # Example: if you had an admin section you wanted to block
+# Disallow: /private/ # Example: if you had private pages
+
+Sitemap: [YOUR_FULL_DOMAIN_HERE]/sitemap.xml
+# Please replace [YOUR_FULL_DOMAIN_HERE] with your actual domain, e.g., https://www.mums-inventory.com

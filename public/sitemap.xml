@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>[YOUR_FULL_DOMAIN_HERE]/</loc>
+    <lastmod>2024-05-29</lastmod> {/* Update this date as your site changes */}
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  {/* Add other public URLs here as they are created, e.g., /features, /pricing */}
+  {/* <url>
+    <loc>[YOUR_FULL_DOMAIN_HERE]/features</loc>
+    <lastmod>2024-05-29</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url> */}
+</urlset>
+<!-- Please replace [YOUR_FULL_DOMAIN_HERE] with your actual domain, e.g., https://www.mums-inventory.com -->

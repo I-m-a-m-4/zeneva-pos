@@ -1,0 +1,24 @@
+
+{
+  "name": "Zeneva POS & Inventory",
+  "short_name": "Zeneva",
+  "description": "Effortless POS & Inventory Control for Business Growth",
+  "start_url": "/dashboard",
+  "display": "standalone",
+  "background_color": "#F0F8FF",
+  "theme_color": "#558BFF",
+  "icons": [
+    {
+      "src": "https://res.cloudinary.com/dd1czj85j/image/upload/v1752758424/Group_7_s14ak7.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "https://res.cloudinary.com/dd1czj85j/image/upload/v1752758424/Group_7_s14ak7.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

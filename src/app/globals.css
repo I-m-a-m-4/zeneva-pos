@@ -1,0 +1,300 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 208 100% 97.1%; /* #F0F8FF */
+    --foreground: 222 25% 25%; /* #323C4D */
+
+    --card: 0 0% 100%; /* White */
+    --card-foreground: 222 25% 25%; /* #323C4D */
+
+    --popover: 0 0% 100%; /* White */
+    --popover-foreground: 222 25% 25%; /* #323C4D */
+
+    --primary: 222 100% 67.1%; /* #558BFF */
+    --primary-foreground: 0 0% 100%; /* White */
+
+    --secondary: 222 100% 92%; /* #D6E4FF - Lighter primary */
+    --secondary-foreground: 222 50% 40%; /* #335599 - Darker blue text for secondary */
+
+    --muted: 220 20% 90%; /* #E1E3E9 - Light grey */
+    --muted-foreground: 220 10% 45%; /* #676A73 - Darker grey text */
+
+    --accent: 256 100% 66.1%; /* #7A53FF */
+    --accent-foreground: 0 0% 100%; /* White */
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 220 20% 85%; /* #CCD1DB - Slightly darker grey for borders */
+    --input: 220 20% 92%; /* #E3E7ED - Lighter grey for input backgrounds */
+    --ring: hsl(var(--primary)); 
+
+    --chart-1: 222 100% 67.1%; /* Primary */
+    --chart-2: 256 100% 66.1%; /* Accent */
+    --chart-3: 200 80% 60%; 
+    --chart-4: 30 80% 65%;
+    --chart-5: 120 50% 55%;
+
+    --radius: 0.5rem;
+
+    /* Sidebar specific theme */
+    --sidebar-background: 222 35% 22%; /* Dark blue: #2A3A59 */
+    --sidebar-foreground: 0 0% 95%; /* Off-white text: #F2F2F2 */
+    --sidebar-primary: 222 100% 67.1%; /* Main primary color: #558BFF */
+    --sidebar-primary-foreground: 0 0% 100%; /* White text on primary */
+    --sidebar-accent: 222 35% 28%; /* Slightly lighter dark blue for hover: #35486B */
+    --sidebar-accent-foreground: 0 0% 100%; /* White text on hover */
+    --sidebar-border: 222 35% 18%; /* Even darker blue for borders: #212D46 */
+    --sidebar-ring: 222 100% 75%; /* Lighter primary for focus ring: #87AFFF */
+  }
+
+  .dark {
+    --background: 222 25% 15%; 
+    --foreground: 0 0% 95%; 
+
+    --card: 222 25% 20%; 
+    --card-foreground: 0 0% 95%;
+
+    --popover: 222 25% 20%;
+    --popover-foreground: 0 0% 95%;
+
+    --primary: 222 100% 67.1%; 
+    --primary-foreground: 0 0% 100%; 
+
+    --secondary: 222 50% 30%; 
+    --secondary-foreground: 0 0% 95%;
+
+    --muted: 222 20% 25%;
+    --muted-foreground: 220 10% 65%;
+
+    --accent: 256 100% 66.1%; 
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 70% 50%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 222 20% 30%;
+    --input: 222 20% 30%;
+    --ring: hsl(var(--primary)); 
+
+    /* Sidebar specific theme - Dark mode */
+    --sidebar-background: 222 30% 12%; 
+    --sidebar-foreground: 0 0% 90%; 
+    --sidebar-primary: 222 100% 67.1%; 
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 222 30% 18%; 
+    --sidebar-accent-foreground: 0 0% 100%; 
+    --sidebar-border: 222 30% 10%; 
+    --sidebar-ring: 222 100% 75%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  html, body {
+    @apply overflow-x-hidden;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+  }
+
+  ::-webkit-scrollbar {
+    width: 8px; 
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent; 
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--border)); 
+    border-radius: 10px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--muted-foreground)); 
+  }
+
+  .text-gradient-primary-accent {
+    @apply bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent;
+  }
+}
+
+/* Print specific styles */
+@media print {
+  body * {
+    visibility: hidden !important; /* Hide everything by default */
+  }
+  .print-only-this-area, .print-only-this-area * {
+    visibility: visible !important; /* Make the designated area and its children visible */
+  }
+  .print-only-this-area {
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+    overflow: visible !important; /* Ensure content isn't clipped */
+  }
+  /* Ensure no-print classes still work within the print-area */
+  .print-only-this-area .no-print, 
+  .print-only-this-area .no-print-in-component {
+    display: none !important;
+    visibility: hidden !important; /* Double ensure */
+  }
+  /* Hide the app layout's header and sidebar trigger specifically */
+  header[class*="sticky top-0"], 
+  button[data-sidebar="trigger"] {
+      display: none !important;
+      visibility: hidden !important;
+  }
+  .no-print {
+    display: none !important;
+    visibility: hidden !important;
+  }
+  .zeneva-watermark {
+    display: block !important; /* Ensure watermark is visible on print */
+  }
+}
+
+
+/* Background Patterns */
+.bg-pattern-dots-sm {
+  background-image: radial-gradient(hsl(var(--border) / 0.1) 0.5px, transparent 0.5px);
+  background-size: 8px 8px;
+}
+.bg-pattern-dots-md {
+  background-image: radial-gradient(hsl(var(--muted) / 0.5) 1px, transparent 1px);
+  background-size: 15px 15px;
+}
+
+
+/* Animated Gradient Border */
+@property --gradient-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@keyframes rotateGradient {
+  0% {
+    --gradient-angle: 0deg;
+  }
+  100% {
+    --gradient-angle: 360deg;
+  }
+}
+
+.animated-gradient-border-wrapper {
+  position: relative;
+  padding: 3px; /* Adjust for border thickness */
+  border-radius: 0.75rem; /* Match image's rounded-lg */
+  overflow: hidden;
+  display: inline-block; /* Or block, depending on layout needs */
+}
+
+.animated-gradient-border-wrapper::before {
+  content: '';
+  position: absolute;
+  top: 0; right: 0; bottom: 0; left: 0;
+  z-index: 0; /* Behind the image but above parent's bg */
+  margin: -3px; /* Negative of padding */
+  border-radius: inherit; /* Inherit from wrapper */
+  background: conic-gradient(
+    from var(--gradient-angle),
+    hsl(var(--primary)), 
+    hsl(var(--accent)), 
+    hsl(320, 70%, 60%), /* Pinkish */
+    hsl(140, 70%, 60%), /* Greenish */
+    hsl(40, 90%, 60%),  /* Orangish */
+    hsl(var(--primary)) /* Loop back to primary */
+  );
+  animation: rotateGradient 5s linear infinite;
+}
+
+.animated-gradient-border-wrapper > * {
+  position: relative; /* Ensure content (image) is above the pseudo-element */
+  z-index: 1;
+  display: block; /* Important for images to fill */
+  border-radius: calc(0.75rem - 3px); /* Inner radius should be adjusted if padding changes */
+}
+
+.hide-for-canvas {
+  display: none !important;
+}
+
+/* Zeneva Watermark */
+.zeneva-watermark {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-30deg);
+  font-size: 4rem; /* Adjust size as needed */
+  font-weight: bold;
+  color: hsl(var(--border) / 0.15); /* Very light, adjust opacity */
+  opacity: 0.5;
+  pointer-events: none; /* So it doesn't interfere with clicks */
+  z-index: 0; /* Behind content */
+  white-space: nowrap;
+  text-transform: uppercase;
+}
+
+@media print {
+  .zeneva-watermark {
+    color: hsl(var(--border) / 0.1) !important; /* Even lighter for print to save ink */
+    font-size: 3.5rem !important;
+  }
+}
+
+/* Splash Screen Animation */
+@layer utilities {
+  @keyframes shimmer {
+    from {
+        background-position: -200% 0;
+    }
+    to {
+        background-position: 200% 0;
+    }
+  }
+
+  .animate-shimmer {
+    background: linear-gradient(
+      90deg,
+      hsl(var(--muted-foreground) / 0.6) 25%,
+      hsl(var(--foreground) / 1) 50%,
+      hsl(var(--muted-foreground) / 0.6) 75%
+    );
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-fill-color: transparent;
+    animation: shimmer 3s linear infinite;
+  }
+}
+
+.animation-delay-2000 {
+  animation-delay: 2s;
+}
+
+.animation-delay-4000 {
+  animation-delay: 4s;
+}
+
+.perspective-\[1000px\] {
+  perspective: 1000px;
+}
+
+.rotate-x-4 {
+  transform: rotateX(4deg);
+}
