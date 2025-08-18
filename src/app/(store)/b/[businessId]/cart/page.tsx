@@ -27,7 +27,13 @@ const initialCartItems: CartItem[] = [
   { id: "item-008", name: "Bluetooth Headphones", price: 12500, quantity: 2, imageUrl: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=64&auto=format&fit=crop", sku: "HP-BT-002" },
 ];
 
-export default function CartPage({ params }: { params: { businessId: string } }) {
+interface CartPageProps {
+  params: {
+    businessId: string;
+  };
+}
+
+export default function CartPage({ params }: CartPageProps) {
   const [cartItems, setCartItems] = React.useState<CartItem[]>(initialCartItems);
   const { toast } = useToast();
 
