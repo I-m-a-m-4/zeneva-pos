@@ -1,4 +1,3 @@
-
 // src/app/(store)/cart/page.tsx
 "use client";
 

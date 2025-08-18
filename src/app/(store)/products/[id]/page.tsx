@@ -1,5 +1,4 @@
-
-// src/app/(store)/b/[businessId]/products/[id]/page.tsx
+// src/app/(store)/products/[id]/page.tsx
 "use client";
 
 import * as React from 'react';
@@ -8,7 +7,7 @@ import Image from 'next/image';
 import type { InventoryItem } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { ShoppingCart, ArrowLeft, Star, Minus, Plus, CheckCircle, AlertTriangle, Truck, Edit, Loader2, Package } from 'lucide-react';
+import { ShoppingCart, ArrowLeft, Star, Minus, Plus, CheckCircle, AlertTriangle, Truck, Edit, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';

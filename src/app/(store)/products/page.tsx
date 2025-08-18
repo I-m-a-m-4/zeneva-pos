@@ -1,10 +1,9 @@
-// src/app/(store)/b/[businessId]/products/page.tsx
+// src/app/(store)/products/page.tsx
 "use client";
 
 import * as React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import type { InventoryItem } from '@/types';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ShoppingCart, Star, Edit, Package, Loader2 } from 'lucide-react';
@@ -13,6 +12,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useParams } from 'next/navigation';
 import { db } from '@/lib/firebase';
 import { collection, query, where, getDocs } from 'firebase/firestore';
+import type { InventoryItem } from '@/types';
 
 export default function StoreProductsPage() {
   const params = useParams<{ businessId: string }>();
@@ -132,5 +132,3 @@ export default function StoreProductsPage() {
     </div>
   );
 }
-
-    
