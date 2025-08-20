@@ -62,7 +62,6 @@ const initialCartItems: CartItem[] = [
   },
 ];
 
-// ✅ Correct Next.js App Router props type
 interface CartPageProps {
   params: {
     businessId: string;
@@ -70,7 +69,9 @@ interface CartPageProps {
   searchParams?: { [key: string]: string | string[] | undefined };
 }
 
-export default function CartPage({ params }: CartPageProps) {
+// ✅ Explicitly Await props to avoid TS thinking `params` is a Promise
+export default function CartPage(props: Awaited<CartPageProps>) {
+  const { params } = props;
   const [cartItems, setCartItems] =
     React.useState<CartItem[]>(initialCartItems);
   const { toast } = useToast();
@@ -112,7 +113,7 @@ export default function CartPage({ params }: CartPageProps) {
   };
 
   return (
-    <div className="space-y-8">
+     <div className="space-y-8">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <h1 className="text-3xl font-bold tracking-tight">
           Your Shopping Cart
