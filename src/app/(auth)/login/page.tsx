@@ -82,18 +82,27 @@ export default function LoginPage() {
 
       toast({
         variant: 'success',
-        title: 'Account Created!',
-        description: 'Welcome to Zeneva! Redirecting you to your dashboard.',
+        title: 'Account Created Successfully!',
+        description: `Welcome to Zeneva, ${signUpFullName}! Your new business, "${signUpBusinessName}", is ready.`,
+        duration: 7000
       });
       
-      // router.push('/dashboard'); // AuthProvider will handle the redirect
+      // The AuthProvider will automatically handle redirecting to the dashboard upon successful authentication state change.
 
     } catch (error: any) {
       console.error("Sign up error:", error);
+      let errorMessage = 'An unexpected error occurred.';
+      if (error.code === 'auth/email-already-in-use') {
+          errorMessage = 'This email is already in use. Please try logging in or use a different email.';
+      } else if (error.code === 'auth/weak-password') {
+          errorMessage = 'The password is too weak. Please use at least 6 characters.';
+      } else {
+          errorMessage = error.message;
+      }
       toast({
         variant: 'destructive',
         title: 'Sign Up Failed',
-        description: error.message || 'An unexpected error occurred.',
+        description: errorMessage,
       });
     } finally {
       setIsSigningUp(false);
@@ -109,15 +118,15 @@ export default function LoginPage() {
         toast({
             variant: 'success',
             title: 'Login Successful!',
-            description: "Welcome back! Redirecting...",
+            description: "Welcome back! Redirecting to your dashboard...",
         });
-        // router.push('/dashboard'); // AuthProvider will handle the redirect
+        // The AuthProvider will handle the redirect upon successful authentication state change.
     } catch (error: any) {
         console.error("Sign in error:", error);
         toast({
             variant: 'destructive',
             title: 'Sign In Failed',
-            description: "Invalid credentials. Please check your email and password.",
+            description: "Invalid email or password. Please check your credentials and try again.",
         });
     } finally {
         setIsSigningIn(false);
@@ -260,3 +269,4 @@ export default function LoginPage() {
     </Tabs>
   );
 }
+

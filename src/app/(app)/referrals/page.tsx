@@ -110,7 +110,7 @@ export default function ReferralsPage() {
                                 <tr className="border-b">
                                     <td className="p-2 font-medium">Global Imports Inc.</td>
                                     <td className="p-2">2024-07-15</td>
-                                    <td className="p-2"><Badge variant="success">Subscribed</Badge></td>
+                                    <td className="p-2"><Badge variant="secondary" className="bg-green-100 text-green-700 border-green-300">Subscribed</Badge></td>
                                     <td className="p-2 text-right text-green-600 font-medium">+ ₦500</td>
                                 </tr>
                                  <tr className="border-b">
