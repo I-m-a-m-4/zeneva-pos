@@ -36,19 +36,21 @@ export default function HeroSection() {
 
         <div className="relative -mb-[15%] md:-mb-[10%] lg:-mb-[8%] xl:-mb-[6%] z-20 group perspective-[1000px]">
           <div className="relative rounded-t-xl transition-transform duration-500 ease-out group-hover:scale-[1.03] group-hover:rotate-x-4">
-             <div className="absolute inset-0 bg-black/10 rounded-t-xl flex items-center justify-center z-10 cursor-pointer">
+             <div className="absolute inset-0 bg-black/50 rounded-t-xl flex items-center justify-center z-10 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                 <PlayCircle className="w-20 h-20 text-white/70 group-hover:text-white transition-colors duration-300" />
             </div>
              <div className="p-2 rounded-xl bg-gradient-to-b from-gray-800 via-gray-900 to-black shadow-2xl">
-                 <Image
-                    src="https://images.unsplash.com/photo-1606184545585-6a537f078536?q=80&w=1200&auto=format&fit=crop"
-                    alt="Zeneva Dashboard showing inventory insights and charts"
-                    width={1200}
-                    height={750}
-                    className="rounded-lg"
-                    priority
-                    data-ai-hint="dashboard analytics inventory"
-                />
+                 <video
+                    src="/zeneva.mp4"
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    className="rounded-lg w-full"
+                    poster="https://images.unsplash.com/photo-1606184545585-6a537f078536?q=80&w=1200&auto=format&fit=crop"
+                >
+                  Your browser does not support the video tag.
+                </video>
              </div>
           </div>
         </div>
