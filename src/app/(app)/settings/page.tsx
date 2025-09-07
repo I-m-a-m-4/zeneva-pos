@@ -332,7 +332,7 @@ export default function SettingsPage() {
   if (authStatus === 'loading') {
     return <div className="flex justify-center items-center h-64"><Loader2 className="h-8 w-8 animate-spin text-primary" /> <span className="ml-2">Loading settings...</span></div>;
   }
-  if (!businessSettings && authStatus !== 'loading') {
+  if (!businessSettings) {
      return <div className="text-center py-10 text-muted-foreground">Could not load business settings. Please ensure a business is selected or try again.</div>;
   }
 
@@ -913,5 +913,3 @@ export default function SettingsPage() {
     </div>
   );
 }
-
-    
