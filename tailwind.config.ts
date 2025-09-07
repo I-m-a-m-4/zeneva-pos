@@ -105,12 +105,18 @@ export default {
             '0%, 100%': { opacity: '0.5', transform: 'scale(1)' },
             '50%': { opacity: '0.7', transform: 'scale(1.05)' },
         },
+        scroll: {
+          to: {
+            transform: "translate(calc(-50% - 2rem))",
+          },
+        },
   		},
   		animation: {
   			'accordion-down': 'accordion-down 0.2s ease-out',
   			'accordion-up': 'accordion-up 0.2s ease-out',
         'fade-in-up': 'fade-in-up 0.8s ease-out forwards',
         'subtle-pulse': 'subtle-pulse 8s ease-in-out infinite',
+        'scroll': 'scroll 40s linear infinite',
   		}
   	}
   },

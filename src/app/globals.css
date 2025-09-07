@@ -5,91 +5,85 @@
 
 @layer base {
   :root {
-    --background: 208 100% 97.1%; /* #F0F8FF */
-    --foreground: 222 25% 25%; /* #323C4D */
+    --background: 0 0% 96.1%; /* #f5f5f5 */
+    --foreground: 240 10% 3.9%;
 
-    --card: 0 0% 100%; /* White */
-    --card-foreground: 222 25% 25%; /* #323C4D */
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
 
-    --popover: 0 0% 100%; /* White */
-    --popover-foreground: 222 25% 25%; /* #323C4D */
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
 
-    --primary: 222 100% 67.1%; /* #558BFF */
-    --primary-foreground: 0 0% 100%; /* White */
+    --primary: 262 59% 53%; /* #783ad5 */
+    --primary-foreground: 0 0% 98%;
 
-    --secondary: 222 100% 92%; /* #D6E4FF - Lighter primary */
-    --secondary-foreground: 222 50% 40%; /* #335599 - Darker blue text for secondary */
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
 
-    --muted: 220 20% 90%; /* #E1E3E9 - Light grey */
-    --muted-foreground: 220 10% 45%; /* #676A73 - Darker grey text */
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
 
-    --accent: 256 100% 66.1%; /* #7A53FF */
-    --accent-foreground: 0 0% 100%; /* White */
+    --accent: 240 4.8% 95.9%;
+    --accent-foreground: 240 5.9% 10%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 220 20% 85%; /* #CCD1DB - Slightly darker grey for borders */
-    --input: 220 20% 92%; /* #E3E7ED - Lighter grey for input backgrounds */
-    --ring: hsl(var(--primary)); 
-
-    --chart-1: 222 100% 67.1%; /* Primary */
-    --chart-2: 256 100% 66.1%; /* Accent */
-    --chart-3: 200 80% 60%; 
-    --chart-4: 30 80% 65%;
-    --chart-5: 120 50% 55%;
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 262 88% 55%;
 
     --radius: 0.5rem;
 
     /* Sidebar specific theme */
     --sidebar-background: 222 35% 22%; /* Dark blue: #2A3A59 */
     --sidebar-foreground: 0 0% 95%; /* Off-white text: #F2F2F2 */
-    --sidebar-primary: 222 100% 67.1%; /* Main primary color: #558BFF */
+    --sidebar-primary: 262 59% 53%; /* Main primary color */
     --sidebar-primary-foreground: 0 0% 100%; /* White text on primary */
     --sidebar-accent: 222 35% 28%; /* Slightly lighter dark blue for hover: #35486B */
     --sidebar-accent-foreground: 0 0% 100%; /* White text on hover */
     --sidebar-border: 222 35% 18%; /* Even darker blue for borders: #212D46 */
-    --sidebar-ring: 222 100% 75%; /* Lighter primary for focus ring: #87AFFF */
+    --sidebar-ring: 262 88% 75%; /* Lighter primary for focus ring */
   }
 
   .dark {
-    --background: 222 25% 15%; 
-    --foreground: 0 0% 95%; 
+    --background: 224 71.4% 4.1%; /* #020817 */
+    --foreground: 210 20% 98%;
 
-    --card: 222 25% 20%; 
-    --card-foreground: 0 0% 95%;
+    --card: 224 71.4% 4.1%;
+    --card-foreground: 210 20% 98%;
 
-    --popover: 222 25% 20%;
-    --popover-foreground: 0 0% 95%;
+    --popover: 224 71.4% 4.1%;
+    --popover-foreground: 210 20% 98%;
 
-    --primary: 222 100% 67.1%; 
-    --primary-foreground: 0 0% 100%; 
+    --primary: 262 88% 60%; /* Slightly lighter purple for dark mode contrast */
+    --primary-foreground: 210 20% 98%;
 
-    --secondary: 222 50% 30%; 
-    --secondary-foreground: 0 0% 95%;
+    --secondary: 215 27.9% 16.9%;
+    --secondary-foreground: 210 20% 98%;
 
-    --muted: 222 20% 25%;
-    --muted-foreground: 220 10% 65%;
+    --muted: 215 27.9% 16.9%;
+    --muted-foreground: 217.9 10.6% 64.9%;
 
-    --accent: 256 100% 66.1%; 
-    --accent-foreground: 0 0% 100%;
+    --accent: 215 27.9% 16.9%;
+    --accent-foreground: 210 20% 98%;
 
-    --destructive: 0 70% 50%;
+    --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 222 20% 30%;
-    --input: 222 20% 30%;
-    --ring: hsl(var(--primary)); 
-
+    --border: 215 27.9% 16.9%;
+    --input: 215 27.9% 16.9%;
+    --ring: 262 88% 60%;
+    
     /* Sidebar specific theme - Dark mode */
     --sidebar-background: 222 30% 12%; 
     --sidebar-foreground: 0 0% 90%; 
-    --sidebar-primary: 222 100% 67.1%; 
+    --sidebar-primary: 262 88% 60%; 
     --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 222 30% 18%; 
     --sidebar-accent-foreground: 0 0% 100%; 
     --sidebar-border: 222 30% 10%; 
-    --sidebar-ring: 222 100% 75%;
+    --sidebar-ring: 262 88% 75%;
   }
 }
 
@@ -101,7 +95,11 @@
     @apply overflow-x-hidden;
   }
   body {
-    @apply bg-background text-foreground antialiased;
+    @apply bg-background text-foreground antialiased font-sans;
+  }
+  
+  body, button, input, textarea, select {
+    font-family: var(--font-jost), sans-serif;
   }
 
   ::-webkit-scrollbar {
@@ -123,17 +121,16 @@
   }
 
   .text-gradient-primary-accent {
-    @apply bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent;
   }
 }
 
-/* Print specific styles */
 @media print {
   body * {
-    visibility: hidden !important; /* Hide everything by default */
+    visibility: hidden !important;
   }
   .print-only-this-area, .print-only-this-area * {
-    visibility: visible !important; /* Make the designated area and its children visible */
+    visibility: visible !important;
   }
   .print-only-this-area {
     position: absolute !important;
@@ -144,15 +141,13 @@
     padding: 0 !important;
     border: none !important;
     box-shadow: none !important;
-    overflow: visible !important; /* Ensure content isn't clipped */
+    overflow: visible !important;
   }
-  /* Ensure no-print classes still work within the print-area */
   .print-only-this-area .no-print, 
   .print-only-this-area .no-print-in-component {
     display: none !important;
-    visibility: hidden !important; /* Double ensure */
+    visibility: hidden !important;
   }
-  /* Hide the app layout's header and sidebar trigger specifically */
   header[class*="sticky top-0"], 
   button[data-sidebar="trigger"] {
       display: none !important;
@@ -163,23 +158,26 @@
     visibility: hidden !important;
   }
   .zeneva-watermark {
-    display: block !important; /* Ensure watermark is visible on print */
+    display: block !important;
   }
 }
 
+.bg-grid-pattern {
+  background-size: 40px 40px;
+  background-image:
+    linear-gradient(to right, hsla(var(--primary-foreground), 0.15) 1px, transparent 1px),
+    linear-gradient(to bottom, hsla(var(--primary-foreground), 0.15) 1px, transparent 1px);
+}
 
-/* Background Patterns */
 .bg-pattern-dots-sm {
   background-image: radial-gradient(hsl(var(--border) / 0.1) 0.5px, transparent 0.5px);
   background-size: 8px 8px;
 }
 .bg-pattern-dots-md {
-  background-image: radial-gradient(hsl(var(--muted) / 0.5) 1px, transparent 1px);
-  background-size: 15px 15px;
+  background-image: radial-gradient(hsla(0, 0%, 100%, 0.05) 1px, transparent 1px);
+  background-size: 1rem 1rem;
 }
 
-
-/* Animated Gradient Border */
 @property --gradient-angle {
   syntax: "<angle>";
   initial-value: 0deg;
@@ -197,66 +195,64 @@
 
 .animated-gradient-border-wrapper {
   position: relative;
-  padding: 3px; /* Adjust for border thickness */
-  border-radius: 0.75rem; /* Match image's rounded-lg */
+  padding: 3px; 
+  border-radius: 0.75rem; 
   overflow: hidden;
-  display: inline-block; /* Or block, depending on layout needs */
+  display: inline-block; 
 }
 
 .animated-gradient-border-wrapper::before {
   content: '';
   position: absolute;
   top: 0; right: 0; bottom: 0; left: 0;
-  z-index: 0; /* Behind the image but above parent's bg */
-  margin: -3px; /* Negative of padding */
-  border-radius: inherit; /* Inherit from wrapper */
+  z-index: 0; 
+  margin: -3px; 
+  border-radius: inherit; 
   background: conic-gradient(
     from var(--gradient-angle),
     hsl(var(--primary)), 
     hsl(var(--accent)), 
-    hsl(320, 70%, 60%), /* Pinkish */
-    hsl(140, 70%, 60%), /* Greenish */
-    hsl(40, 90%, 60%),  /* Orangish */
-    hsl(var(--primary)) /* Loop back to primary */
+    hsl(320, 70%, 60%), 
+    hsl(140, 70%, 60%), 
+    hsl(40, 90%, 60%),  
+    hsl(var(--primary)) 
   );
   animation: rotateGradient 5s linear infinite;
 }
 
 .animated-gradient-border-wrapper > * {
-  position: relative; /* Ensure content (image) is above the pseudo-element */
+  position: relative; 
   z-index: 1;
-  display: block; /* Important for images to fill */
-  border-radius: calc(0.75rem - 3px); /* Inner radius should be adjusted if padding changes */
+  display: block; 
+  border-radius: calc(0.75rem - 3px); 
 }
 
 .hide-for-canvas {
   display: none !important;
 }
 
-/* Zeneva Watermark */
 .zeneva-watermark {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%) rotate(-30deg);
-  font-size: 4rem; /* Adjust size as needed */
+  font-size: 4rem; 
   font-weight: bold;
-  color: hsl(var(--border) / 0.15); /* Very light, adjust opacity */
+  color: hsl(var(--border) / 0.15); 
   opacity: 0.5;
-  pointer-events: none; /* So it doesn't interfere with clicks */
-  z-index: 0; /* Behind content */
+  pointer-events: none; 
+  z-index: 0; 
   white-space: nowrap;
   text-transform: uppercase;
 }
 
 @media print {
   .zeneva-watermark {
-    color: hsl(var(--border) / 0.1) !important; /* Even lighter for print to save ink */
+    color: hsl(var(--border) / 0.1) !important; 
     font-size: 3.5rem !important;
   }
 }
 
-/* Splash Screen Animation */
 @layer utilities {
   @keyframes shimmer {
     from {
@@ -297,4 +293,12 @@
 
 .rotate-x-4 {
   transform: rotateX(4deg);
+}
+
+.bg-pattern-squares {
+    background-color: hsl(var(--primary));
+    opacity: 1;
+    background-image:  linear-gradient(45deg, hsla(var(--primary), 0.5) 25%, transparent 25%, transparent 75%, hsla(var(--primary), 0.5) 75%, hsla(var(--primary), 0.5)), linear-gradient(45deg, hsla(var(--primary), 0.5) 25%, transparent 25%, transparent 75%, hsla(var(--primary), 0.5) 75%, hsla(var(--primary), 0.5));
+    background-size: 60px 60px;
+    background-position: 0 0, 30px 30px;
 }

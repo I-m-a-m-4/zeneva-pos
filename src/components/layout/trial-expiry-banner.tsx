@@ -3,44 +3,65 @@
 
 import type React from 'react';
 import *as React from 'react';
-import { AlertTriangle, X } from 'lucide-react';
+import { AlertTriangle } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import type { Notification } from '@/types';
-import { cn } from '@/lib/utils';
+import type { BusinessInstance } from '@/types';
 
 interface TrialExpiryBannerProps {
-  notifications?: Notification[];
-  onDismiss: (notificationId: string) => void;
+  currentBusiness: BusinessInstance | null;
 }
 
-const TrialExpiryBanner: React.FC<TrialExpiryBannerProps> = ({ notifications = [], onDismiss }) => {
-  const trialNotification = notifications.find(n => n.type === 'trial' && !n.isRead);
+const TrialExpiryBanner: React.FC<TrialExpiryBannerProps> = ({ currentBusiness }) => {
+  const [isVisible, setIsVisible] = React.useState(false);
+  const [message, setMessage] = React.useState("");
 
-  if (!trialNotification) {
+  React.useEffect(() => {
+    if (currentBusiness && currentBusiness.trialEndsAt) {
+      const trialEndDate = new Date(currentBusiness.trialEndsAt);
+      const now = new Date();
+      
+      // Don't show if the user is on a paid plan already (e.g. lifetime)
+      if (currentBusiness.subscriptionTierId !== 'free' && currentBusiness.subscriptionTierId !== 'pro') {
+          // Assuming 'pro' is a paid tier. Modify if 'pro' can also be a trial.
+          // The main logic is: if they are on a *paid* tier, don't show trial warnings.
+          const paidTiers = ['pro', 'lifetime', 'enterprise'];
+          if (paidTiers.includes(currentBusiness.subscriptionTierId)) {
+             setIsVisible(false);
+             return;
+          }
+      }
+      
+      const sevenDaysFromNow = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+
+      if (trialEndDate < now) {
+        setMessage(`Your Zeneva trial for "${currentBusiness.businessName}" has expired. Please upgrade to continue enjoying full access.`);
+        setIsVisible(true);
+      } else if (trialEndDate <= sevenDaysFromNow) {
+        const daysLeft = Math.ceil((trialEndDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+        setMessage(`Your Zeneva trial for "${currentBusiness.businessName}" ends in ${daysLeft} day(s) on ${trialEndDate.toLocaleDateString()}. Upgrade to ensure uninterrupted service.`);
+        setIsVisible(true);
+      } else {
+        setIsVisible(false);
+      }
+    } else {
+      setIsVisible(false);
+    }
+  }, [currentBusiness]);
+
+  if (!isVisible || !currentBusiness) {
     return null;
   }
-  
-  const isExpired = trialNotification.description.includes('expired');
 
   return (
-    <div className={cn(
-        "px-4 py-3 rounded-md mb-4 flex items-center justify-between shadow-lg border-l-4",
-        isExpired ? "bg-destructive/10 border-destructive text-destructive-foreground" : "bg-yellow-500/20 border-yellow-600 text-yellow-800 dark:text-yellow-200"
-    )}>
+    <div className="bg-yellow-500/20 border border-yellow-600 text-yellow-800 px-4 py-3 rounded-md mb-4 flex items-center justify-between shadow-md">
       <div className="flex items-center">
-        <AlertTriangle className={cn("h-5 w-5 mr-3", isExpired ? "text-destructive" : "text-yellow-700 dark:text-yellow-200")} />
-        <p className="text-sm font-medium">{trialNotification.description}</p>
+        <AlertTriangle className="h-5 w-5 mr-3 text-yellow-700" />
+        <p className="text-sm font-medium">{message}</p>
       </div>
-      <div className="flex items-center gap-2">
-        <Button size="sm" asChild className="bg-primary hover:bg-primary/90 text-primary-foreground">
-          <Link href="/settings">Upgrade Now</Link>
-        </Button>
-        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => onDismiss(trialNotification.id)}>
-            <X className="h-4 w-4" />
-            <span className="sr-only">Dismiss</span>
-        </Button>
-      </div>
+      <Button size="sm" asChild className="bg-primary hover:bg-primary/90 text-primary-foreground">
+        <Link href="/settings">Upgrade Now</Link>
+      </Button>
     </div>
   );
 };

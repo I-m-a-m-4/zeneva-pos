@@ -65,7 +65,8 @@ export default function InventoryPage() {
     try {
       const q = query(
         collection(db, "products"), 
-        where("businessId", "==", currentBusinessId)
+        where("businessId", "==", currentBusinessId), 
+        orderBy("createdAt", "desc")
       );
       const querySnapshot = await getDocs(q);
       const items: InventoryItem[] = [];

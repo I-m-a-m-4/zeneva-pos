@@ -20,7 +20,7 @@ export function Toaster() {
       {toasts.map(function ({ id, title, description, action, variant, ...props }) {
         const Icon = {
           success: <CheckCircle2 className="h-6 w-6 text-green-600" />,
-          destructive: <XCircle className="h-6 w-6 text-destructive" />,
+          destructive: <AlertTriangle className="h-6 w-6 text-destructive" />,
           default: <Info className="h-6 w-6 text-primary" />,
         }[variant || "default"]
 
@@ -44,5 +44,3 @@ export function Toaster() {
     </ToastProvider>
   )
 }
-
-    

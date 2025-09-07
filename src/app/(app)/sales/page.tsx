@@ -1,59 +1,34 @@
 
 "use client";
 
-import * as React from 'react';
 import PageTitle from '@/components/shared/page-title';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { ShoppingCart, PlusCircle, ReceiptText, BarChart, Search, Filter, Printer, CreditCardIcon, Info, MoreVertical, Eye, Loader2 } from 'lucide-react';
+import { ShoppingCart, PlusCircle, ReceiptText, BarChart, Search, Filter, Printer, CreditCardIcon, Info, MoreVertical, Eye } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 import type { Receipt } from '@/types';
+import { mockReceipts } from '@/lib/data';
 import { Badge } from '@/components/ui/badge';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useRouter } from 'next/navigation';
-import { useAuth } from '@/context/auth-context';
-import { db } from '@/lib/firebase';
-import { collection, query, where, orderBy, getDocs } from 'firebase/firestore';
+import type { Metadata } from 'next'; // Import Metadata
+
+// export const metadata: Metadata = { // This page is client component, metadata here is not directly used by Next.js
+//   title: "Sales & POS - Zeneva",
+//   description: "Manage sales transactions and access the Point of Sale system with Zeneva. Efficiently process sales for your Nigerian business.",
+// };
+
 
 type SaleTransaction = Receipt;
 
 export default function SalesPage() {
-  const [salesTransactions, setSalesTransactions] = React.useState<SaleTransaction[]>([]);
-  const [isLoading, setIsLoading] = React.useState(true);
+  const salesTransactions: SaleTransaction[] = mockReceipts.slice(0, 3);
   const { toast } = useToast();
   const router = useRouter();
-  const { currentBusinessId } = useAuth();
-
-  React.useEffect(() => {
-    if (!currentBusinessId) {
-      setIsLoading(false);
-      return;
-    }
-
-    const fetchSales = async () => {
-        setIsLoading(true);
-        try {
-            const q = query(
-                collection(db, "receipts"),
-                where("businessId", "==", currentBusinessId),
-                orderBy("date", "desc")
-            );
-            const querySnapshot = await getDocs(q);
-            const sales = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as SaleTransaction));
-            setSalesTransactions(sales);
-        } catch (error) {
-            console.error("Error fetching sales transactions:", error);
-            toast({ variant: 'destructive', title: 'Error', description: 'Could not fetch sales records.' });
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    fetchSales();
-  }, [currentBusinessId, toast]);
 
   const handleNewSale = () => {
+    // Navigate to the first step of the POS flow
     router.push('/sales/pos/select-products');
   };
 
@@ -74,9 +49,7 @@ export default function SalesPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {isLoading ? (
-            <div className="flex justify-center items-center h-40"><Loader2 className="h-8 w-8 animate-spin text-primary"/></div>
-          ) : salesTransactions.length > 0 ? (
+          {salesTransactions.length > 0 ? (
             <>
               <div className="mb-4 flex flex-col md:flex-row items-center gap-2">
                  <div className="flex items-center gap-2 w-full md:w-1/2">

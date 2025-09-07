@@ -16,9 +16,10 @@ import { useToast } from '@/hooks/use-toast';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { useAuth } from '@/context/auth-context';
-import { db } from '@/lib/firebase';
-import { collection, query, where, getDocs } from 'firebase/firestore';
+import { db, isPlaceholderConfig } from '@/lib/firebase';
+import { collection, query, where, getDocs, orderBy } from 'firebase/firestore';
 import { cn } from '@/lib/utils';
+import { mockInventoryItems } from '@/lib/data';
 import StableImage from '@/components/shared/stable-image';
 
 const ITEMS_PER_PAGE = 40;
@@ -50,23 +51,28 @@ export default function SelectProductsPage() {
     const fetchProducts = async () => {
         if (!currentBusinessId) return;
         setIsLoading(true);
-        try {
-            const q = query(collection(db, "products"), where("businessId", "==", currentBusinessId));
-            const querySnapshot = await getDocs(q);
-            const products = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as InventoryItem));
-            setAllProducts(products);
-            if (products.length === 0) {
-                 toast({
-                    title: "Your Inventory is Empty",
-                    description: "Please add products to your inventory to start making sales.",
-                    variant: "default", // Changed from destructive
-                    duration: 7000,
-                });
-                 router.push('/inventory/add');
+        if (isPlaceholderConfig()) {
+            console.warn("Firebase not configured, using mock product data for POS.");
+            setAllProducts(mockInventoryItems);
+        } else {
+            try {
+                const q = query(collection(db, "products"), where("businessId", "==", currentBusinessId), orderBy("name"));
+                const querySnapshot = await getDocs(q);
+                const products = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as InventoryItem));
+                setAllProducts(products);
+                if (products.length === 0) {
+                     toast({
+                        title: "No Products Found",
+                        description: "Your inventory is empty. Please add products to start selling.",
+                        variant: "destructive",
+                        duration: 7000,
+                    });
+                     router.push('/inventory/add');
+                }
+            } catch (error) {
+                console.error("Error fetching products for POS:", error);
+                toast({ title: "Error Loading Products", description: "Could not fetch product data from the database.", variant: "destructive" });
             }
-        } catch (error) {
-            console.error("Error fetching products for POS:", error);
-            toast({ title: "Error Loading Products", description: "Could not fetch product data from the database.", variant: "destructive" });
         }
         setIsLoading(false);
     };
@@ -439,5 +445,3 @@ export default function SelectProductsPage() {
     </div>
   );
 }
-
-    

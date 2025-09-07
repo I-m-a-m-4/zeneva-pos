@@ -17,8 +17,11 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import type { UserStaff, UserRole } from '@/types';
 import { useAuth } from '@/context/auth-context';
 import { db } from '@/lib/firebase';
-import { collection, addDoc, updateDoc, deleteDoc, serverTimestamp, query, where, getDocs, doc } from "firebase/firestore";
-import ReauthDialog from '@/components/app/reauth-dialog';
+import { collection, addDoc, updateDoc, deleteDoc, serverTimestamp, query, where, getDocs } from "firebase/firestore";
+
+
+const OWNER_ACCESS_KEY_STORAGE = "zeneva-inventory-owner-access-key";
+const DEFAULT_FALLBACK_OWNER_PASSWORD = "zenevaaccess123";
 
 const rolesWithCapabilities: { name: string; value: UserRole; capabilities: string[] }[] = [
   {
@@ -53,20 +56,31 @@ const rolesWithCapabilities: { name: string; value: UserRole; capabilities: stri
   },
 ];
 
+
 export default function UsersStaffPage() {
   const [usersStaff, setUsersStaff] = React.useState<UserStaff[]>([]);
   const [isAddUserModalOpen, setIsAddUserModalOpen] = React.useState(false);
   const [editingUser, setEditingUser] = React.useState<UserStaff | null>(null);
   const [isLoading, setIsLoading] = React.useState(false);
   
-  const [isAccessGranted, setIsAccessGranted] = React.useState(false);
-  const [isReauthOpen, setIsReauthOpen] = React.useState(true);
+  const [isAccessGranted, setIsAccessGranted] = React.useState(false); // Set to true to bypass password for dev
+  const [isPasswordDialogOpen, setIsPasswordDialogOpen] = React.useState(true);
+  const [passwordInput, setPasswordInput] = React.useState("");
+  const [passwordError, setPasswordError] = React.useState("");
+  const [showPassword, setShowPassword] = React.useState(false);
   
   const router = useRouter();
   const { toast } = useToast();
-  const { currentBusinessId, currentRole, status: authStatus } = useAuth();
+  const { currentBusinessId, currentRole, status: authStatus } = useAuth(); // Get current business context
 
   const [newUserForm, setNewUserForm] = React.useState({ fullName: "", email: "", role: "manager" as UserRole, password: "" });
+
+  const getOwnerAccessPassword = React.useCallback(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem(OWNER_ACCESS_KEY_STORAGE) || DEFAULT_FALLBACK_OWNER_PASSWORD;
+    }
+    return DEFAULT_FALLBACK_OWNER_PASSWORD;
+  }, []);
 
   React.useEffect(() => {
     if (authStatus !== 'loading' && currentRole !== 'admin') { 
@@ -75,22 +89,13 @@ export default function UsersStaffPage() {
         return;
     }
     if (!isAccessGranted && currentRole === 'admin') {
-      setIsReauthOpen(true);
+      setIsPasswordDialogOpen(true);
     }
-  }, [currentRole, router, toast, authStatus, isAccessGranted]);
-  
-  const handleReauthSuccess = () => {
-    setIsAccessGranted(true);
-    setIsReauthOpen(false);
-    toast({ title: "Admin Access Verified", description: "You can now manage users and staff." });
-    if (currentBusinessId) {
+    if (currentBusinessId && currentRole === 'admin' && isAccessGranted) {
         fetchStaffForBusiness(currentBusinessId);
     }
-  };
-  
-  const handleReauthCancel = () => {
-    router.push('/dashboard');
-  };
+  }, [isAccessGranted, currentBusinessId, currentRole, router, toast, authStatus]);
+
 
   const fetchStaffForBusiness = async (businessId: string) => {
     setIsLoading(true);
@@ -106,6 +111,36 @@ export default function UsersStaffPage() {
     } finally {
         setIsLoading(false);
     }
+  };
+
+
+  const handlePasswordSubmit = () => {
+    const correctPassword = getOwnerAccessPassword();
+    if (passwordInput === correctPassword) {
+      setIsAccessGranted(true);
+      setIsPasswordDialogOpen(false);
+      setPasswordError("");
+       if (correctPassword === DEFAULT_FALLBACK_OWNER_PASSWORD && (typeof window !== 'undefined' && !localStorage.getItem(OWNER_ACCESS_KEY_STORAGE))) {
+        toast({
+          title: "Default Password Used",
+          description: "Consider setting a custom owner access password in Zeneva Inventory Settings for better security.",
+          duration: 7000,
+        });
+      }
+    } else {
+      setPasswordError("Incorrect password. Access denied.");
+       toast({
+        variant: "destructive",
+        title: "Access Denied",
+        description: "The password you entered is incorrect.",
+      });
+    }
+  };
+
+  const handlePasswordDialogClose = (isOpen: boolean) => {
+      if (!isOpen && !isAccessGranted) {
+        router.push('/dashboard');
+      }
   };
 
   const handleOpenAddModal = () => {
@@ -146,15 +181,17 @@ export default function UsersStaffPage() {
     };
 
     try {
-        if (editingUser) {
+        if (editingUser) { // Update existing user
             const userRef = doc(db, 'users', editingUser.id);
             await updateDoc(userRef, staffData);
             toast({ title: "User Updated", description: `${newUserForm.fullName}'s details updated.` });
-        } else {
+        } else { // Add new user - This requires backend logic to create Firebase Auth user
             toast({ title: "Action Not Implemented", description: `In a real app, a backend function would create an auth user for ${newUserForm.email} before adding them to Firestore.` });
             console.log("Simulating adding new user:", staffData);
+            // In a real app, you would use a Cloud Function to create the auth user
+            // then create the Firestore document.
         }
-        if (currentBusinessId) fetchStaffForBusiness(currentBusinessId);
+        fetchStaffForBusiness(currentBusinessId); // Refresh list
         setIsAddUserModalOpen(false);
         setEditingUser(null);
     } catch (error) {
@@ -171,6 +208,7 @@ export default function UsersStaffPage() {
     
     setIsLoading(true);
     try {
+        // This should also be a backend function to delete from Firebase Auth too
         await deleteDoc(doc(db, "users", userToDelete.id));
         toast({ variant: "destructive", title: "User Deleted", description: `${userToDelete.fullName} has been removed.` });
         fetchStaffForBusiness(currentBusinessId);
@@ -182,18 +220,64 @@ export default function UsersStaffPage() {
     }
   };
 
-  if (!isAccessGranted) {
-    return (
-        <ReauthDialog 
-            isOpen={isReauthOpen} 
-            onOpenChange={setIsReauthOpen} 
-            onSuccess={handleReauthSuccess} 
-            onCancel={handleReauthCancel} 
-            title="Admin Verification Required"
-            description="To manage users and staff, please confirm your identity by entering your account password."
-        />
-    )
+  if (authStatus === 'loading') {
+    return <div className="flex justify-center items-center h-64"><Loader2 className="h-8 w-8 animate-spin text-primary" /> <span className="ml-2">Verifying access...</span></div>;
   }
+  
+  if (!isAccessGranted && currentRole === 'admin') {
+    return (
+      <Dialog open={isPasswordDialogOpen} onOpenChange={handlePasswordDialogClose}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+                <LockKeyhole className="h-6 w-6 text-primary" /> Owner Access Required
+            </DialogTitle>
+            <DialogDescription>
+              Please enter the owner access password to manage users and staff for Zeneva Inventory.
+              {getOwnerAccessPassword() === DEFAULT_FALLBACK_OWNER_PASSWORD && (typeof window !== 'undefined' && !localStorage.getItem(OWNER_ACCESS_KEY_STORAGE)) && (
+                <span className="mt-2 block text-xs">
+                  Current default is: <code>{DEFAULT_FALLBACK_OWNER_PASSWORD}</code>. It's recommended to change this in Settings.
+                </span>
+              )}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="ownerPassword">Password</Label>
+              <div className="relative">
+                <Input
+                  id="ownerPassword"
+                  type={showPassword ? "text" : "password"}
+                  value={passwordInput}
+                  onChange={(e) => setPasswordInput(e.target.value)}
+                  placeholder="Enter owner password"
+                  onKeyPress={(e) => e.key === 'Enter' && handlePasswordSubmit()}
+                />
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7"
+                  onClick={() => setShowPassword(!showPassword)}
+                  type="button"
+                >
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </Button>
+              </div>
+              {passwordError && <p className="text-sm text-destructive mt-1">{passwordError}</p>}
+            </div>
+          </div>
+          <DialogFooter>
+             <Button variant="outline" onClick={() => {
+                setIsPasswordDialogOpen(false);
+                router.push('/dashboard');
+             }}>Cancel</Button>
+            <Button onClick={handlePasswordSubmit}>Unlock Access</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    );
+  }
+
 
   return (
     <div className="flex flex-col gap-6">

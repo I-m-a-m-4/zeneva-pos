@@ -10,7 +10,6 @@
 
 import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
-import { mockInventoryItems, mockReceipts } from '@/lib/data'; // Using mock data for now
 
 // Input Schema: In a real app, this might just be the businessId to query data.
 // For this demo, we'll pass simplified data structures directly.

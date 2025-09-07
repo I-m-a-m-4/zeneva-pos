@@ -1,24 +1,29 @@
 
 {
-  "name": "Zeneva POS & Inventory",
-  "short_name": "Zeneva",
-  "description": "Effortless POS & Inventory Control for Business Growth",
-  "start_url": "/dashboard",
-  "display": "standalone",
-  "background_color": "#F0F8FF",
-  "theme_color": "#558BFF",
+  "name": "Inventify - POS & Inventory",
+  "short_name": "Inventify",
+  "description": "Smart POS & Inventory Management for Growing Businesses. Track sales, manage stock, generate reports, and grow with ease.",
   "icons": [
     {
-      "src": "https://res.cloudinary.com/dd1czj85j/image/upload/v1752758424/Group_7_s14ak7.png",
+      "src": "/icons/icon-192x192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any"
+      "purpose": "any maskable"
     },
     {
-      "src": "https://res.cloudinary.com/dd1czj85j/image/upload/v1752758424/Group_7_s14ak7.png",
+      "src": "/icons/icon-384x384.png",
+      "sizes": "384x384",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
       "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "maskable"
+      "type": "image/png"
     }
-  ]
+  ],
+  "theme_color": "#558BFF",
+  "background_color": "#F0F8FF",
+  "start_url": "/dashboard",
+  "display": "standalone",
+  "orientation": "portrait"
 }

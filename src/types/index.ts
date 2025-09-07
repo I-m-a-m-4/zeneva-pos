@@ -54,16 +54,18 @@ export interface Receipt {
   };
 }
 
-export interface Notification {
-    id: string;
-    title: string;
-    description: string;
-    type: 'system' | 'trial' | 'low_stock' | 'broadcast';
-    isRead: boolean;
-    createdAt: any;
-    userId?: string; // For user-specific notifications
-    businessId?: string; // For business-wide notifications
-    href?: string;
+export interface PaymentRecord {
+  id: string; 
+  receiptId: string; 
+  businessId: string;
+  staffId: string; 
+  amount: number;
+  method: string; 
+  targetAccountId: string; 
+  transactionRef?: string; 
+  status: 'completed' | 'pending' | 'failed';
+  createdAt: any; 
+  notes?: string;
 }
 
 
@@ -116,7 +118,6 @@ export interface StaffMember {
   role: UserRole;
   status: 'active' | 'inactive';
   businessId: string; 
-  businessName?: string; // Optional, to be populated in frontend
   createdAt?: any; 
   updatedAt?: any; 
 }
@@ -212,7 +213,7 @@ export interface BusinessInstance {
   businessName: string;
   subscriptionTierId: string; 
   status: 'Active' | 'Suspended' | 'Trial';
-  createdAt: any; 
+  createdAt: string; 
   trialEndsAt?: string; 
   userCount?: number;
   totalPlatformSpend?: number;
@@ -222,10 +223,6 @@ export interface BusinessInstance {
     phone?: string;
     email?: string;
   };
-  // Aggregated data for super admin
-  productCount?: number;
-  receiptCount?: number;
-  customerCount?: number;
 }
 
 

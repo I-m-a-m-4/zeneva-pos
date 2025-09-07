@@ -12,7 +12,7 @@ import { useToast } from "@/hooks/use-toast";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth';
 import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { app, db } from '@/lib/firebase';
-import { Loader2, AlertCircle } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose, DialogTrigger } from '@/components/ui/dialog';
 
@@ -24,20 +24,22 @@ export default function LoginPage() {
   const router = useRouter();
   const auth = getAuth(app);
 
-  // State
+  // Sign Up State
   const [signUpBusinessName, setSignUpBusinessName] = React.useState('');
   const [signUpFullName, setSignUpFullName] = React.useState('');
   const [signUpEmail, setSignUpEmail] = React.useState('');
   const [signUpPassword, setSignUpPassword] = React.useState('');
+
+  // Sign In State
   const [signInEmail, setSignInEmail] = React.useState('');
   const [signInPassword, setSignInPassword] = React.useState('');
+
+  // Forgot Password State
   const [resetEmail, setResetEmail] = React.useState('');
-  const [loginError, setLoginError] = React.useState('');
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSigningUp(true);
-    setLoginError('');
 
     if (!signUpBusinessName || !signUpFullName || !signUpEmail || !signUpPassword) {
         toast({ variant: 'destructive', title: 'Error', description: 'All fields are required for sign up.' });
@@ -98,7 +100,6 @@ export default function LoginPage() {
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSigningIn(true);
-    setLoginError('');
     
     try {
         await signInWithEmailAndPassword(auth, signInEmail, signInPassword);
@@ -110,12 +111,11 @@ export default function LoginPage() {
         router.push('/dashboard');
     } catch (error: any) {
         console.error("Sign in error:", error);
-        if (error.code === 'auth/invalid-credential') {
-            setLoginError('Invalid email or password. Please check your credentials or click "Create Account" to sign up.');
-        } else {
-            setLoginError("An unexpected error occurred. Please try again.");
-        }
-        setSignInPassword('');
+        toast({
+            variant: 'destructive',
+            title: 'Sign In Failed',
+            description: "Invalid credentials. Please check your email and password.",
+        });
     } finally {
         setIsSigningIn(false);
     }
@@ -148,7 +148,7 @@ export default function LoginPage() {
   };
 
   return (
-    <Tabs defaultValue="signin" className="w-full" onValueChange={() => setLoginError('')}>
+    <Tabs defaultValue="signin" className="w-full">
       <TabsList className="grid w-full grid-cols-2">
         <TabsTrigger value="signin">Sign In</TabsTrigger>
         <TabsTrigger value="signup">Create Account</TabsTrigger>
@@ -164,12 +164,6 @@ export default function LoginPage() {
           </CardHeader>
           <form onSubmit={handleSignIn}>
           <CardContent className="space-y-4">
-             {loginError && (
-              <div className="bg-destructive/10 text-destructive text-sm p-3 rounded-md flex items-start gap-2">
-                <AlertCircle className="h-4 w-4 mt-0.5 shrink-0" />
-                <p>{loginError}</p>
-              </div>
-            )}
             <div className="space-y-1">
               <Label htmlFor="signin-email">Email</Label>
               <Input id="signin-email" type="email" placeholder="you@example.com" required value={signInEmail} onChange={e => setSignInEmail(e.target.value)} disabled={isSigningIn}/>

@@ -2,52 +2,65 @@
 "use client";
 
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Zap, ShieldCheck, Smile, TrendingUp, Users, Lock, FileDigit, NotebookPen } from "lucide-react";
+import { TrendingUp, BarChartHorizontalBig, BookOpenCheck } from "lucide-react";
+import Image from "next/image";
 
 const benefits = [
   {
-    icon: <Zap className="h-8 w-8 text-primary mb-3 mx-auto" />,
-    title: "Effortless Control",
-    description: "Intuitive tools from Zeneva put you in command of your inventory and sales, simplifying daily tasks and operations.",
+    icon: <BookOpenCheck className="h-8 w-8 text-primary mb-3" />,
+    title: "Real-Time Inventory Tracking",
+    description: "Zeneva provides real-time inventory tracking to prevent stockouts and overselling, ensuring your business runs smoothly.",
+    imageUrl: "https://images.unsplash.com/photo-1556740738-b6a63e27c4df?q=80&w=1200&auto=format&fit=crop",
+    imageHint: "cashier processing a sale with pos system"
   },
   {
-    icon: <Users className="h-8 w-8 text-primary mb-3 mx-auto" />,
-    title: "Delegate with Confidence",
-    description: "Secure user roles allow you to assign tasks to staff without exposing sensitive business data, so you can grow your team.",
+    icon: <BarChartHorizontalBig className="h-8 w-8 text-primary mb-3" />,
+    title: "Automatic Reordering",
+    description: "Set reorder points and let Zeneva automatically generate purchase orders when stock is low, saving you time and effort.",
+    imageUrl: "https://images.unsplash.com/photo-1542382257-80ded25d7588?q=80&w=1200&auto=format&fit=crop",
+    imageHint: "inventory management in a warehouse"
   },
   {
-    icon: <TrendingUp className="h-8 w-8 text-primary mb-3 mx-auto" />,
-    title: "Data-Driven Growth",
-    description: "Understand your business better with clear reports. Identify top-selling products and make smarter decisions to increase profits.",
-  },
-   {
-    icon: <ShieldCheck className="h-8 w-8 text-primary mb-3 mx-auto" />,
-    title: "Secure Your Profits",
-    description: "Minimize errors and track every sale with digital records. A clear audit trail improves accountability and reduces discrepancies.",
+    icon: <TrendingUp className="h-8 w-8 text-primary mb-3" />,
+    title: "Comprehensive Analytics",
+    description: "Gain valuable insights with detailed analytics on sales, inventory turnover, and profitability to make data-driven decisions.",
+    imageUrl: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1200&auto=format&fit=crop",
+    imageHint: "analytics dashboard with charts and graphs"
   },
 ];
 
 export default function KeyBenefitsSection() {
   return (
-    <section id="key-benefits" className="container py-16 md:py-24 relative text-center">
-      <div className="mb-12">
-        <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
-          Go Beyond Chat, Build a Real Business
-        </h2>
-        <p className="mt-4 max-w-2xl mx-auto text-muted-foreground md:text-lg">
-          Zeneva provides the structure and security that messaging apps lack, giving you the foundation to scale professionally.
-        </p>
+    <section id="key-benefits" className="container py-16 md:py-24 text-center">
+        <div className="mb-4">
+            <span className="inline-block rounded-lg bg-primary/10 px-3 py-1 text-sm font-medium text-primary mb-3">
+            Benefits
+          </span>
+          <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
+            Why Choose Our Inventory Management System
+          </h2>
+          <p className="mt-4 max-w-2xl mx-auto text-muted-foreground md:text-lg">
+            Boost workforce productivity, good efficiency, and stay ahead with smart management insights.
+          </p>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8">
         {benefits.map((benefit) => (
-          <Card key={benefit.title} className="text-center bg-card/80 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300 ease-in-out transform hover:-translate-y-1.5">
-            <CardHeader className="items-center">
-              {benefit.icon}
-              <CardTitle className="text-xl">{benefit.title}</CardTitle>
+          <Card key={benefit.title} className="text-left bg-card shadow-lg hover:shadow-xl transition-shadow p-6">
+            <CardHeader>
+                {benefit.icon}
+              <CardTitle>{benefit.title}</CardTitle>
             </CardHeader>
-            <CardDescription className="px-6 pb-6 text-sm">
+            <CardDescription className="px-6 pb-6 text-base">
               {benefit.description}
             </CardDescription>
+            <Image 
+                src={benefit.imageUrl} 
+                alt={benefit.title} 
+                width={400} 
+                height={250} 
+                className="rounded-lg border shadow-sm mt-4 aspect-video object-cover"
+                data-ai-hint={benefit.imageHint}
+            />
           </Card>
         ))}
       </div>

@@ -13,7 +13,7 @@ import { useToast } from '@/hooks/use-toast';
 import type { Receipt as ReceiptType, POSCartItem, InventoryItem } from '@/types';
 import { Separator } from '@/components/ui/separator';
 import Logo from '@/components/icons/logo';
-import { db } from "@/lib/firebase";
+import { db, isPlaceholderConfig } from "@/lib/firebase";
 import { collection, addDoc, serverTimestamp, doc, updateDoc, increment, writeBatch, runTransaction, getDoc } from "firebase/firestore";
 import Confetti from 'react-confetti';
 
@@ -259,6 +259,22 @@ export default function ReviewSalePage() {
       paymentMethod: paymentMethod,
       notes: notes,
     };
+
+    if (isPlaceholderConfig()) {
+      toast({
+        variant: "destructive",
+        title: "Firebase Not Configured",
+        description: "Please update Firebase credentials in src/lib/firebase.ts to save receipts.",
+        duration: 7000,
+      });
+      setIsCompletingSale(false);
+      console.log("Simulated sale completion (Firebase not configured):", receiptData);
+      toast({ title: "Sale Completed (Locally Simulated)", description: `Receipt ${receiptData.receiptNumber} processed locally.`, variant: 'success' });
+      resetPOSSession();
+      console.log("ReviewPage: Sale completed (local sim), navigating to /sales.");
+      router.push('/sales');
+      return;
+    }
 
     toast({ title: "Processing Sale...", description: "Saving transaction details. Please wait." });
 

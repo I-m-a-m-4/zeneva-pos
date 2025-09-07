@@ -22,9 +22,9 @@ import { Button } from '@/components/ui/button';
 import Logo from '@/components/icons/logo';
 import Link from 'next/link';
 import {
-  LayoutDashboard, Archive, Settings, ReceiptText, Bell, LogOut, ChevronDown, List, Tags, Percent, ShoppingCart, Globe, Repeat, Landmark, FileText, Users, UserCog, BarChartBig, FileSpreadsheet, Truck, Calculator, Package, Building, Briefcase, Users2, TrendingUp, Palette, ShieldCheck, Search as SearchIcon, FilePlus2, DollarSign, Home, CreditCard, UserPlus, AlertTriangle, CheckCircle2, InfoIcon, Store, Sparkles, Award, MailQuestion, GiftIcon, ActivityIcon, ShieldQuestion, Lightbulb, Loader2, ShieldAlert, Wrench, Moon, Sun, PanelLeft
+  LayoutDashboard, Archive, Settings, ReceiptText, Bell, LogOut, ChevronDown, List, Tags, Percent, ShoppingCart, Globe, Repeat, Landmark, FileText, Users, UserCog, BarChartBig, FileSpreadsheet, Truck, Calculator, Package, Building, Briefcase, Users2, TrendingUp, Palette, ShieldCheck, Search as SearchIcon, FilePlus2, DollarSign, Home, CreditCard, UserPlus, AlertTriangle, CheckCircle2, InfoIcon, Store, Sparkles, Award, MailQuestion, GiftIcon, ActivityIcon, ShieldQuestion, Lightbulb, Loader2, ShieldAlert, Wrench, Moon, Sun
 } from 'lucide-react';
-import type { NavItem, NavItemGroup, SearchableAppItem, BusinessInstance, UserRole, Notification } from '@/types';
+import type { NavItem, NavItemGroup, SearchableAppItem, BusinessInstance, UserRole } from '@/types';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -39,8 +39,6 @@ import { AuthProvider, useAuth } from '@/context/auth-context';
 import MobileBottomNav from '@/components/layout/mobile-bottom-nav';
 import TrialExpiryBanner from '@/components/layout/trial-expiry-banner';
 import { useTheme } from 'next-themes';
-import { collection, query, where, orderBy, getDocs, onSnapshot, Unsubscribe, addDoc, serverTimestamp } from "firebase/firestore";
-import { db } from '@/lib/firebase';
 
 
 const navItemsConfig: (NavItem | NavItemGroup)[] = [
@@ -145,97 +143,14 @@ function AppLayoutContent({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const { user, status, userBusinessRoles, currentBusinessId, currentRole, currentBusiness, selectBusiness, logout } = useAuth();
   const { setTheme } = useTheme();
-  
-  const [notifications, setNotifications] = React.useState<Notification[]>([]);
+
+  const [unreadAlertsCount, setUnreadAlertsCount] = React.useState(0);
   const [isCalculatorOpen, setIsCalculatorOpen] = React.useState(false);
 
   const [searchTerm, setSearchTerm] = React.useState("");
   const [searchResults, setSearchResults] = React.useState<SearchableAppItem[]>([]);
   const [isSearchPopoverOpen, setIsSearchPopoverOpen] = React.useState(false);
   const searchInputRef = React.useRef<HTMLInputElement>(null);
-
-  React.useEffect(() => {
-    if (status === 'unauthenticated') {
-      router.replace('/login');
-    }
-  }, [status, router]);
-  
-  React.useEffect(() => {
-    let unsubscribe: Unsubscribe | undefined;
-
-    if (currentBusinessId && user?.uid) {
-        // Query for business-wide and user-specific notifications
-        const notificationsQuery = query(
-            collection(db, "notifications"),
-            where("businessId", "in", [currentBusinessId, "platform_wide"]), // For all in business or platform
-            where("isRead", "==", false),
-            orderBy("createdAt", "desc")
-        );
-
-        unsubscribe = onSnapshot(notificationsQuery, (snapshot) => {
-            const fetchedNotifications = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Notification));
-            
-            let finalNotifications = [...fetchedNotifications];
-
-            // Manually add trial notification if applicable
-            if (currentBusiness && currentBusiness.trialEndsAt) {
-                 const trialEndDate = new Date(currentBusiness.trialEndsAt);
-                 const now = new Date();
-                 const sevenDaysFromNow = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
-                 const isPaid = currentBusiness.subscriptionTierId !== 'free';
-
-                 if (!isPaid) {
-                     let trialMessage = "";
-                     if (trialEndDate < now) {
-                         trialMessage = `Your trial for "${currentBusiness.businessName}" has expired.`;
-                     } else if (trialEndDate <= sevenDaysFromNow) {
-                         const daysLeft = Math.ceil((trialEndDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
-                         trialMessage = `Your trial for "${currentBusiness.businessName}" ends in ${daysLeft} day(s).`;
-                     }
-
-                     if (trialMessage) {
-                         const trialNotification: Notification = {
-                             id: 'trial_notification',
-                             title: 'Trial Status',
-                             description: trialMessage,
-                             type: 'trial',
-                             isRead: false,
-                             createdAt: new Date().toISOString(),
-                             businessId: currentBusinessId,
-                         };
-                         // Avoid adding duplicates if already present somehow
-                         if (!finalNotifications.some(n => n.id === 'trial_notification')) {
-                            finalNotifications.push(trialNotification);
-                         }
-                     }
-                 }
-            }
-            finalNotifications.sort((a,b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-            setNotifications(finalNotifications);
-        }, (error) => {
-            console.error("Error fetching notifications:", error);
-            toast({ variant: 'destructive', title: 'Error', description: 'Could not fetch notifications.' });
-        });
-    }
-
-    return () => {
-        if (unsubscribe) {
-            unsubscribe();
-        }
-    };
-  }, [currentBusinessId, user?.uid, toast, currentBusiness]);
-
-
-  const unreadAlertsCount = notifications.filter(n => !n.isRead).length;
-
-  const handleDismissNotification = (notificationId: string) => {
-     setNotifications(prev => prev.map(n => n.id === notificationId ? { ...n, isRead: true } : n));
-     toast({ title: "Notification Dismissed", description: "This will reappear on next refresh for now."});
-     // In a real app, you would also update the `isRead` status in Firestore.
-     // const notificationRef = doc(db, 'notifications', notificationId);
-     // await updateDoc(notificationRef, { isRead: true });
-  };
-
 
   if (status === 'loading') {
     return (
@@ -248,7 +163,7 @@ function AppLayoutContent({ children }: { children: React.ReactNode }) {
   }
 
   if (status === 'unauthenticated') {
-    return (
+     return (
        <div className="flex items-center justify-center h-screen bg-background">
         <p className="text-lg text-muted-foreground">Redirecting to login...</p>
         <Loader2 className="h-8 w-8 text-primary animate-spin ml-2" />
@@ -349,7 +264,7 @@ function AppLayoutContent({ children }: { children: React.ReactNode }) {
       <TooltipProvider>
         <SidebarProvider defaultOpen>
           <Sidebar variant="sidebar" collapsible="icon">
-            <SidebarHeader className="p-4 flex items-center justify-between">
+            <SidebarHeader className="p-4 flex items-center gap-2 justify-between">
               <Link href="/dashboard" className="flex items-center gap-2 text-sidebar-foreground hover:text-sidebar-primary transition-colors">
                 <Logo size={28} />
                 <span className="text-2xl font-semibold group-data-[collapsible=icon]/sidebar:hidden">Zeneva</span>
@@ -472,7 +387,7 @@ function AppLayoutContent({ children }: { children: React.ReactNode }) {
                   <DropdownMenuSeparator />
                   {currentRole === 'admin' && user?.email === 'bimex4@gmail.com' && (
                       <DropdownMenuItem asChild>
-                          <Link href="/super-admin">
+                          <Link href="/imamshaffy">
                               <ShieldAlert className="mr-2 h-4 w-4" />
                               <span>Platform Admin</span>
                           </Link>
@@ -507,7 +422,7 @@ function AppLayoutContent({ children }: { children: React.ReactNode }) {
           </Sidebar>
           <SidebarInset>
             <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background/80 backdrop-blur-sm px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6 py-4">
-              <SidebarTrigger className="hidden md:flex"/>
+              <SidebarTrigger className="md:hidden"/>
               <div className="relative flex-1 md:grow-0">
                 <Popover open={isSearchPopoverOpen} onOpenChange={setIsSearchPopoverOpen}>
                   <PopoverTrigger asChild>
@@ -582,17 +497,7 @@ function AppLayoutContent({ children }: { children: React.ReactNode }) {
                       <PopoverContent align="end" className="w-80 p-0">
                         <div className="p-4 font-medium border-b">Notifications</div>
                         <ScrollArea className="h-[300px]">
-                           {notifications.length > 0 ? notifications.map(n => (
-                                <div key={n.id} className="p-3 border-b flex items-start gap-3">
-                                    <AlertTriangle className="h-4 w-4 text-yellow-500 mt-1 shrink-0"/>
-                                    <div className="flex-1">
-                                        <p className="text-sm font-semibold">{n.title}</p>
-                                        <p className="text-xs text-muted-foreground">{n.description}</p>
-                                    </div>
-                                </div>
-                            )) : (
-                               <p className="p-4 text-sm text-muted-foreground text-center">No new notifications.</p>
-                            )}
+                            <p className="p-4 text-sm text-muted-foreground text-center">No new notifications.</p>
                         </ScrollArea>
                       </PopoverContent>
                     </Popover>
@@ -637,7 +542,7 @@ function AppLayoutContent({ children }: { children: React.ReactNode }) {
               </div>
             </header>
             <main className="flex-1 p-4 sm:p-6 overflow-auto md:pb-6 pb-24">
-               <TrialExpiryBanner notifications={notifications} onDismiss={handleDismissNotification} />
+               <TrialExpiryBanner currentBusiness={currentBusiness} />
               {children}
             </main>
           </SidebarInset>

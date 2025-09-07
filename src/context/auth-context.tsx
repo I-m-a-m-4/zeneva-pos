@@ -5,7 +5,7 @@ import *as React from 'react';
 import { useRouter } from 'next/navigation';
 import { getAuth, onAuthStateChanged, signOut, type User } from 'firebase/auth';
 import { doc, getDoc, collection, query, where, getDocs } from 'firebase/firestore';
-import { app, db } from '@/lib/firebase';
+import { app, db, isPlaceholderConfig } from '@/lib/firebase';
 import type {
   AuthContextType,
   AuthState,
@@ -49,6 +49,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       
       const userData = userSnap.data() as UserStaff;
 
+      // In a multi-business scenario, you might query where user is a member.
+      // For this 1-to-1 model, we fetch the single business instance they belong to.
       const businessId = userData.businessId;
       if (!businessId) {
           setState(prev => ({ ...prev, status: 'no_business', error: new Error("User is not associated with a business.") }));
@@ -90,18 +92,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
 
   React.useEffect(() => {
+    if (isPlaceholderConfig()) {
+      console.error("CRITICAL: Firebase is not configured with real credentials. The app will not function correctly. Please update src/lib/firebase.ts");
+      setState(prev => ({ ...prev, status: 'unauthenticated', error: new Error("Firebase credentials are not configured.") }));
+      router.push('/login');
+      return;
+    }
+
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         setState(prev => ({ ...prev, status: 'loading', user: { uid: user.uid, email: user.email, displayName: user.displayName, photoURL: user.photoURL } }));
         fetchUserRolesAndSelectFirstBusiness(user.uid);
       } else {
-        setState(initialState);
-        router.push('/');
+        setState(initialState); // Reset state to initial
+        router.push('/login');  // Redirect to login if user is not found
       }
     });
 
     return () => unsubscribe();
-  }, [auth, fetchUserRolesAndSelectFirstBusiness, router]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
 
   const login = async (userProfile: UserProfile) => {
@@ -112,7 +122,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
         await signOut(auth);
         setState(initialState);
-        router.push('/');
+        router.push('/login');
     } catch (error) {
         console.error("Error signing out: ", error);
     }

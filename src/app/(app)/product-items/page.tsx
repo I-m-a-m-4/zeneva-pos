@@ -6,65 +6,34 @@ import PageTitle from '@/components/shared/page-title';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { ListPlus, FilePlus2, ScanBarcode, Edit3, Layers, Search, PackageOpen, MoreVertical, Trash2, Loader2 } from 'lucide-react';
+import { ListPlus, FilePlus2, ScanBarcode, Edit3, Layers, Search, PackageOpen, MoreVertical, Trash2 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { mockInventoryItems } from '@/lib/data';
 import type { InventoryItem } from '@/types';
 import { Separator } from '@/components/ui/separator';
 import StableImage from '@/components/shared/stable-image';
-import { useAuth } from '@/context/auth-context';
-import { db } from '@/lib/firebase';
-import { collection, query, where, getDocs, orderBy } from 'firebase/firestore';
-import { useToast } from '@/hooks/use-toast';
 
 type GroupedProducts = {
   [key: string]: InventoryItem[];
 };
 
 export default function ProductItemsPage() {
-  const { currentBusinessId } = useAuth();
-  const { toast } = useToast();
   const [groupedProducts, setGroupedProducts] = React.useState<GroupedProducts>({});
-  const [isLoading, setIsLoading] = React.useState(true);
-  const [hasProducts, setHasProducts] = React.useState(false);
 
   React.useEffect(() => {
-    if (!currentBusinessId) {
-        setIsLoading(false);
-        return;
-    }
-
-    const fetchAndGroupProducts = async () => {
-      setIsLoading(true);
-      try {
-        const productsQuery = query(collection(db, "products"), where("businessId", "==", currentBusinessId), orderBy("name"));
-        const querySnapshot = await getDocs(productsQuery);
-        const inventoryItems = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as InventoryItem));
-
-        setHasProducts(inventoryItems.length > 0);
-
-        const groupByCategoryAndName = inventoryItems.reduce((acc, item) => {
-          const key = `${item.category || 'Uncategorized'}__${item.name}`;
-          if (!acc[key]) {
-            acc[key] = [];
-          }
-          acc[key].push(item);
-          return acc;
-        }, {} as GroupedProducts);
-
-        setGroupedProducts(groupByCategoryAndName);
-
-      } catch (error) {
-        console.error("Error fetching product items:", error);
-        toast({ variant: 'destructive', title: 'Error', description: 'Could not fetch product items.' });
-      } finally {
-        setIsLoading(false);
+    const groupByCategoryAndName = mockInventoryItems.reduce((acc, item) => {
+      const key = `${item.category}__${item.name}`; // Group by category and name
+      if (!acc[key]) {
+        acc[key] = [];
       }
-    };
-    
-    fetchAndGroupProducts();
-  }, [currentBusinessId, toast]);
+      acc[key].push(item);
+      return acc;
+    }, {} as GroupedProducts);
+    setGroupedProducts(groupByCategoryAndName);
+  }, []);
 
+  const hasProducts = mockInventoryItems.length > 0;
 
   return (
     <div className="flex flex-col gap-6">
@@ -85,9 +54,7 @@ export default function ProductItemsPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {isLoading ? (
-            <div className="flex justify-center items-center h-40"><Loader2 className="h-8 w-8 animate-spin text-primary"/></div>
-          ) : hasProducts ? (
+          {hasProducts ? (
              <>
               <div className="mb-4 flex items-center gap-2">
                 <Search className="h-4 w-4 text-muted-foreground" />

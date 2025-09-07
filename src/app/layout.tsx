@@ -1,9 +1,11 @@
-
 import type {Metadata} from 'next';
 import NextTopLoader from 'nextjs-toploader';
+import { Jost } from 'next/font/google';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from '@/components/layout/theme-provider';
+
+const jost = Jost({ subsets: ['latin'], variable: '--font-jost' });
 
 const siteUrl = "https://zeneva-pos.vercel.app";
 
@@ -39,10 +41,13 @@ export const metadata: Metadata = {
   },
   manifest: "/manifest.json",
   icons: {
-    icon: '/icon.png',
+    icon: '/icon.png', 
     shortcut: '/icon.png',
     apple: '/icon.png',
-    other: [], // Explicitly clear out other icon types
+    other: {
+      rel: 'apple-touch-icon-precomposed',
+      url: '/icon.png',
+    },
   },
 };
 
@@ -115,7 +120,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-        <meta name="theme-color" content="#558BFF" />
+        <meta name="theme-color" content="#783ad5" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
@@ -129,10 +134,10 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareApplicationSchema) }}
         />
       </head>
-      <body>
+      <body className={jost.variable}>
         <ThemeProvider
           attribute="class"
-          defaultTheme="system"
+          defaultTheme="light"
           enableSystem
           disableTransitionOnChange
         >

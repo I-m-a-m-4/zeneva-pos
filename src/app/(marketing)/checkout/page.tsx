@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter }
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { mockSubscriptionTiers } from '@/lib/data';
 import { ArrowLeft, CreditCard, Lock, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Separator } from '@/components/ui/separator';
@@ -45,20 +46,73 @@ export default function CheckoutPage() {
   const searchParams = useSearchParams();
   const { toast } = useToast();
 
-  const [planId, setPlanId] = React.useState<string | null>(null);
+  const [selectedPlan, setSelectedPlan] = React.useState<typeof mockSubscriptionTiers[0] | null>(null);
   const [isProcessing, setIsProcessing] = React.useState(false);
   const [email, setEmail] = React.useState('');
   
   React.useEffect(() => {
-    setPlanId(searchParams.get('plan'));
+    const planId = searchParams.get('plan');
+    if (planId) {
+      const plan = mockSubscriptionTiers.find(t => t.id === planId);
+      setSelectedPlan(plan || null);
+    }
   }, [searchParams]);
 
   const handlePaymentSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    // Logic for payment submission
+    if (!selectedPlan || (selectedPlan.id !== 'free' && !email)) {
+        toast({ variant: "destructive", title: "Error", description: "Email address is required for paid plans." });
+        return;
+    }
+    
+    setIsProcessing(true);
+
+    try {
+        const response = await fetch('/api/checkout/paystack', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                email: email,
+                amount: (selectedPlan.priceMonthly ?? selectedPlan.priceLifetime ?? 0) * 1.075 * 100, // Amount in kobo
+                planId: selectedPlan.id,
+            }),
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            // In a real scenario, you'd redirect to data.authorization_url
+            // For this simulation, we'll just show success and redirect to dashboard.
+            console.log("Paystack response (simulated):", data);
+            toast({
+              title: "Payment Initialized!",
+              description: `Redirecting to secure payment... (Simulation)`,
+              duration: 4000,
+            });
+            // Simulate waiting for payment webhook or redirect back
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            toast({
+              variant: "success",
+              title: "Payment Successful!",
+              description: `Your subscription to the ${selectedPlan?.name || 'plan'} is now active. Welcome to Zeneva!`,
+              duration: 6000,
+            });
+            router.push('/dashboard');
+        } else {
+            throw new Error(data.message || 'Payment initiation failed');
+        }
+    } catch (error) {
+        toast({
+            variant: "destructive",
+            title: "Payment Error",
+            description: (error as Error).message || "An unexpected error occurred.",
+        });
+    } finally {
+        setIsProcessing(false);
+    }
   };
 
-  if (!planId) {
+  if (!selectedPlan) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh]">
         <Loader2 className="h-12 w-12 animate-spin text-primary" />
@@ -67,10 +121,8 @@ export default function CheckoutPage() {
     );
   }
 
-  // Placeholder data for summary, as mock data file is removed
-  const planName = planId.charAt(0).toUpperCase() + planId.slice(1) + " Plan";
-  const price = planId === 'pro' ? 7500 : planId === 'lifetime' ? 250000 : 0;
-  const isFreeTier = planId === 'free';
+  const price = selectedPlan.priceMonthly ?? selectedPlan.priceLifetime ?? 0;
+  const isFreeTier = selectedPlan.id === 'free';
   
   return (
     <div className="container max-w-4xl mx-auto py-12 px-4">
@@ -87,9 +139,9 @@ export default function CheckoutPage() {
             <CardContent className="space-y-4">
               <div className="flex justify-between items-center p-4 bg-muted/50 rounded-md">
                 <div>
-                  <h3 className="font-semibold">{planName}</h3>
+                  <h3 className="font-semibold">{selectedPlan.name}</h3>
                   <p className="text-sm text-muted-foreground">
-                    {planId === 'lifetime' ? 'One-time Payment' : (isFreeTier ? 'No cost' : 'Billed Monthly')}
+                    {selectedPlan.id === 'lifetime' ? 'One-time Payment' : (selectedPlan.id === 'free' ? 'No cost' : 'Billed Monthly')}
                   </p>
                 </div>
                 <div className="text-lg font-bold">
