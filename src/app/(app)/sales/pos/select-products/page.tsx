@@ -1,7 +1,7 @@
 
 "use client";
 
-import * as React from 'react';
+import *as React from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -19,7 +19,6 @@ import { useAuth } from '@/context/auth-context';
 import { db, isPlaceholderConfig } from '@/lib/firebase';
 import { collection, query, where, getDocs, orderBy } from 'firebase/firestore';
 import { cn } from '@/lib/utils';
-import { mockInventoryItems } from '@/lib/data';
 import StableImage from '@/components/shared/stable-image';
 
 const ITEMS_PER_PAGE = 40;
@@ -53,7 +52,7 @@ export default function SelectProductsPage() {
         setIsLoading(true);
         if (isPlaceholderConfig()) {
             console.warn("Firebase not configured, using mock product data for POS.");
-            setAllProducts(mockInventoryItems);
+            setAllProducts([]);
         } else {
             try {
                 const q = query(collection(db, "products"), where("businessId", "==", currentBusinessId), orderBy("name"));
