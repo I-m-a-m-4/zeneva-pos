@@ -1,7 +1,6 @@
 
 "use client";
 
-import type React from 'react';
 import *as React from 'react';
 import { usePathname } from 'next/navigation';
 import {
@@ -140,7 +139,7 @@ const searchableAppItems: SearchableAppItem[] = [
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const { toast } = useToast();
   const pathname = usePathname();
-  const { user, status, userBusinessRoles, currentBusinessId, currentRole, currentBusiness, selectBusiness, logout } = useAuth();
+  const { user, userBusinessRoles, currentBusinessId, currentRole, currentBusiness, selectBusiness, logout } = useAuth();
   const { setTheme } = useTheme();
 
   const [unreadAlertsCount, setUnreadAlertsCount] = React.useState(0);
@@ -150,10 +149,6 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   const [searchResults, setSearchResults] = React.useState<SearchableAppItem[]>([]);
   const [isSearchPopoverOpen, setIsSearchPopoverOpen] = React.useState(false);
   const searchInputRef = React.useRef<HTMLInputElement>(null);
-  
-  if (status !== 'authenticated') {
-    return null;
-  }
   
   const handleCalculatorClick = () => setIsCalculatorOpen(true);
 
