@@ -131,7 +131,7 @@ export default function CategoriesPage() {
       <Card className="mt-4">
         <CardHeader>
             <CardTitle className="flex items-center gap-2"><ListTree className="h-5 w-5 text-primary"/> Hierarchical Categories (Planned)</CardTitle>
-            <CardDescription>Future enhancements will allow for creating sub-categories for even more granular organization (e.g., Electronics > Mobile Phones > Smartphones).</CardDescription>
+            <CardDescription>Future enhancements will allow for creating sub-categories for even more granular organization (e.g., Electronics &gt; Mobile Phones &gt; Smartphones).</CardDescription>
         </CardHeader>
       </Card>
     </div>
