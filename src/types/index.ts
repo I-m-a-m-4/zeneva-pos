@@ -48,10 +48,7 @@ export interface Receipt {
   notes?: string;
   createdAt?: any; 
   updatedAt?: any; 
-  customerDetails?: { 
-    email?: string;
-    phone?: string;
-  };
+  customerDetails?: Partial<Customer>;
 }
 
 export interface PaymentRecord {
