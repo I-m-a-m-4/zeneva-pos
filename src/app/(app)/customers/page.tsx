@@ -1,7 +1,7 @@
 
 "use client"; 
 
-import * as React from 'react';
+import *as React from 'react';
 import PageTitle from '@/components/shared/page-title';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -386,7 +386,7 @@ export default function CustomersPage() {
                             <Label className="text-xs">Has Loyalty Points</Label>
                             <select value={loyaltyFilter} onChange={e => setLoyaltyFilter(e.target.value as 'all' | 'yes' | 'no')} className="w-full p-2 border rounded-md bg-background text-sm">
                                 <option value="all">Any</option>
-                                <option value="yes">Yes (Points > 0)</option>
+                                <option value="yes">Yes (Points &gt; 0)</option>
                                 <option value="no">No (Points = 0)</option>
                             </select>
                         </div>
