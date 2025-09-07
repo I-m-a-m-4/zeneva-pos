@@ -33,6 +33,9 @@ const initialState: AuthState = {
   error: null,
 };
 
+const publicPaths = ['/login', '/about', '/contact', '/blog', '/privacy', '/terms', '/checkout'];
+
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [state, setState] = React.useState<AuthState>(initialState);
   const router = useRouter();
@@ -104,7 +107,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     });
     return () => unsubscribe();
-  }, [auth, fetchUserRolesAndSelectFirstBusiness, state.status]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [auth, fetchUserRolesAndSelectFirstBusiness]);
 
   const logout = async () => {
     try {
@@ -154,7 +158,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     );
   }
 
-  if (state.status === 'unauthenticated' && !pathname.startsWith('/login') && !pathname.startsWith('/(marketing)')) {
+  const isPublicPath = pathname === '/' || publicPaths.some(p => pathname.startsWith(p));
+
+  if (state.status === 'unauthenticated' && !isPublicPath) {
     if (typeof window !== 'undefined') {
       router.push('/login');
     }
@@ -166,7 +172,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     );
   }
   
-  if (state.status === 'no_business' && !pathname.startsWith('/login')) {
+  if (state.status === 'no_business' && !isPublicPath) {
      return (
       <div className="flex flex-col items-center justify-center h-screen bg-background p-6 text-center">
         <Logo size={48} className="mb-4 text-primary"/>
