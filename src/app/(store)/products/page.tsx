@@ -1,134 +1,198 @@
-// src/app/(store)/products/page.tsx
 "use client";
 
 import * as React from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
-import { Card, CardContent, CardFooter } from '@/components/ui/card';
+import PageTitle from '@/components/shared/page-title';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ShoppingCart, Star, Edit, Package, Loader2 } from 'lucide-react';
+import Link from 'next/link';
+import { ListPlus, FilePlus2, ScanBarcode, Edit3, Layers, Search, PackageOpen, MoreVertical, Trash2, Loader2 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import { useToast } from '@/hooks/use-toast';
-import { useParams } from 'next/navigation';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import type { InventoryItem } from '@/types';
+import { Separator } from '@/components/ui/separator';
+import StableImage from '@/components/shared/stable-image';
+import { useAuth } from '@/context/auth-context';
 import { db } from '@/lib/firebase';
 import { collection, query, where, getDocs } from 'firebase/firestore';
-import type { InventoryItem } from '@/types';
+import { useToast } from '@/hooks/use-toast';
 
-export default function StoreProductsPage() {
-  const params = useParams<{ businessId: string }>();
+type GroupedProducts = {
+  [key: string]: InventoryItem[];
+};
+
+export default function ProductItemsPage() {
+  const { currentBusinessId } = useAuth();
   const { toast } = useToast();
-  
-  const [products, setProducts] = React.useState<InventoryItem[]>([]);
+  const [groupedProducts, setGroupedProducts] = React.useState<GroupedProducts>({});
   const [isLoading, setIsLoading] = React.useState(true);
 
   React.useEffect(() => {
-    if (!params.businessId) return;
-    
-    const fetchProducts = async () => {
+    if (!currentBusinessId) {
+      setIsLoading(false);
+      return;
+    }
+    const fetchAndGroupProducts = async () => {
       setIsLoading(true);
       try {
-        const productsQuery = query(
-          collection(db, 'products'),
-          where('businessId', '==', params.businessId),
-          where('stock', '>', 0)
-        );
-        const querySnapshot = await getDocs(productsQuery);
-        const fetchedProducts = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as InventoryItem));
-        setProducts(fetchedProducts);
+        const q = query(collection(db, "products"), where("businessId", "==", currentBusinessId));
+        const querySnapshot = await getDocs(q);
+        const products = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as InventoryItem));
+
+        const grouped = products.reduce((acc, item) => {
+          const key = `${item.category}__${item.name}`;
+          if (!acc[key]) {
+            acc[key] = [];
+          }
+          acc[key].push(item);
+          return acc;
+        }, {} as GroupedProducts);
+        
+        setGroupedProducts(grouped);
       } catch (error) {
-        console.error("Error fetching storefront products:", error);
-        toast({ variant: 'destructive', title: "Error", description: "Could not load products for this store." });
+        console.error("Error fetching products:", error);
+        toast({ variant: 'destructive', title: 'Error', description: 'Could not load product items.' });
       } finally {
         setIsLoading(false);
       }
     };
+    fetchAndGroupProducts();
+  }, [currentBusinessId, toast]);
 
-    fetchProducts();
-  }, [params.businessId, toast]);
-  
-  const handleAddToCart = (productName: string) => {
-    toast({
-      title: "Added to Cart (Simulated)",
-      description: `${productName} has been added to your cart.`,
-    });
-  };
-
-  const handleEditContent = (section: string) => {
-    toast({
-        title: "Edit Content (Planned)",
-        description: `Content editing for '${section}' is a planned Pro feature for business owners.`,
-        duration: 5000,
-    });
-  };
-
+  const hasProducts = Object.keys(groupedProducts).length > 0;
 
   return (
-    <div className="space-y-8">
-      <div className="text-center relative group">
-        <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">Welcome to Our Store!</h1>
-        <p className="mt-4 text-lg text-muted-foreground">Browse our collection of high-quality products.</p>
-        <Button variant="outline" size="sm" className="absolute top-0 right-0 opacity-0 group-hover:opacity-100 transition-opacity" onClick={() => handleEditContent('Store Welcome Message')}>
-            <Edit className="mr-2 h-3 w-3"/> Edit Welcome
+    <div className="flex flex-col gap-6">
+      <PageTitle title="Product Item Management" subtitle="Manage individual product SKUs and their variations.">
+        <Button asChild>
+          <Link href="/inventory/add">
+            <ListPlus className="mr-2 h-4 w-4" />
+            Add New Product Item
+          </Link>
         </Button>
-      </div>
-
-      {isLoading ? (
-        <div className="flex justify-center items-center py-20">
-          <Loader2 className="h-12 w-12 animate-spin text-primary" />
-        </div>
-      ) : products.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {products.map((product) => (
-            <Card key={product.id} className="flex flex-col overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 group relative">
-              <Link href={`/b/${params.businessId}/products/${product.id}`} className="block">
-                <div className="aspect-[4/3] relative w-full bg-muted">
-                  <Image
-                    src={product.imageUrl || "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=400&auto=format&fit=crop"}
-                    alt={product.name}
-                    fill
-                    className="object-cover"
-                    data-ai-hint={product.dataAiHint || "product photo e-commerce"}
-                    onError={(e) => { (e.target as HTMLImageElement).src = 'https://placehold.co/400x300/E1E3E9/676A73?text=Image+Not+Found'; }}
-                  />
-                  {product.stock <= product.lowStockThreshold && product.stock > 0 && (
-                     <Badge variant="default" className="absolute top-2 right-2 bg-yellow-500 text-black">Low Stock</Badge>
-                  )}
-                </div>
+      </PageTitle>
+      <Card>
+        <CardHeader>
+          <CardTitle>Detailed Product Item Control</CardTitle>
+          <CardDescription>
+            View, add, and manage all your product items and their variants (e.g., by size or color). 
+            Each unique item variation should have its own SKU.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {isLoading ? (
+            <div className="flex justify-center items-center h-40"><Loader2 className="h-8 w-8 animate-spin text-primary"/></div>
+          ) : hasProducts ? (
+             <>
+              <div className="mb-4 flex items-center gap-2">
+                <Search className="h-4 w-4 text-muted-foreground" />
+                <input type="text" placeholder="Search product items by name, SKU, or attribute..." className="w-full md:w-1/2 p-2 border rounded-md bg-background"/>
+              </div>
+              <div className="space-y-4">
+                {Object.entries(groupedProducts).map(([groupKey, items]) => {
+                  const [category, name] = groupKey.split('__');
+                  return (
+                    <Card key={groupKey} className="p-4 hover:shadow-md transition-shadow bg-muted/20">
+                      <div className="flex justify-between items-center mb-3">
+                        <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
+                          <Layers className="h-5 w-5 text-primary" /> 
+                          {name} <Badge variant="outline">{category}</Badge>
+                        </h3>
+                         <Button variant="ghost" size="sm" asChild>
+                           <Link href={`/inventory/add?name=${encodeURIComponent(name)}&category=${encodeURIComponent(category)}`}>
+                              <FilePlus2 className="mr-2 h-4 w-4"/> Add Variant
+                           </Link>
+                         </Button>
+                      </div>
+                      <Separator />
+                      <div className="mt-3 space-y-2">
+                        {items.map(item => (
+                           <Card key={item.id} className="p-3 bg-card shadow-sm">
+                             <div className="flex items-center gap-4">
+                              <StableImage
+                                alt={item.name}
+                                className="aspect-square rounded-md object-cover border hidden sm:block"
+                                height="48"
+                                src={item.imageUrl}
+                                placeholder="https://placehold.co/48x48"
+                                width="48"
+                                data-ai-hint={item.dataAiHint || "product item small"}
+                              />
+                              <div className="flex-grow">
+                                <p className="font-medium text-foreground">{item.variantDescription || 'Base Item'}</p>
+                                <p className="text-sm text-muted-foreground">SKU: {item.sku}</p>
+                                <p className="text-xs text-muted-foreground">
+                                  Stock: <span className="font-semibold">{item.stock.toLocaleString()}</span> units | Price: <span className="font-semibold">₦{item.price.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
+                                </p>
+                              </div>
+                              <div className="flex-shrink-0">
+                                <DropdownMenu>
+                                  <DropdownMenuTrigger asChild>
+                                    <Button variant="ghost" size="icon"><MoreVertical className="h-4 w-4"/></Button>
+                                  </DropdownMenuTrigger>
+                                  <DropdownMenuContent align="end">
+                                    <DropdownMenuItem asChild><Link href={`/inventory/${item.id}`}><PackageOpen className="mr-2 h-4 w-4"/> View Full Details</Link></DropdownMenuItem>
+                                    <DropdownMenuItem onClick={() => alert(`Edit ${item.name}`)}><Edit3 className="mr-2 h-4 w-4"/> Edit Item</DropdownMenuItem>
+                                    <DropdownMenuItem className="text-destructive focus:text-destructive" onClick={() => alert(`Delete ${item.name}`)}><Trash2 className="mr-2 h-4 w-4"/> Delete Item</DropdownMenuItem>
+                                  </DropdownMenuContent>
+                                </DropdownMenu>
+                              </div>
+                            </div>
+                           </Card>
+                        ))}
+                      </div>
+                    </Card>
+                  );
+                })}
+              </div>
+            </>
+          ) : (
+          <div className="text-center py-10 border-2 border-dashed border-muted rounded-lg">
+            <FilePlus2 className="mx-auto h-16 w-16 text-muted-foreground opacity-50 mb-4" />
+            <h3 className="text-xl font-semibold text-foreground mb-2">No Detailed Product Items Yet</h3>
+            <p className="text-muted-foreground mb-4 max-w-md mx-auto">
+                Go beyond basic stock counts. Define rich product information to improve your operations:
+            </p>
+            <ul className="text-sm text-muted-foreground list-disc list-inside mb-6 text-left inline-block">
+                <li>Manage product variations (size, color, material).</li>
+                <li>Add detailed descriptions and specifications.</li>
+                <li>Track supplier details and costs (planned).</li>
+                <li>Set up complex pricing rules (planned).</li>
+            </ul>
+            <Button asChild>
+              <Link href="/inventory/add"> 
+                Add Your First Detailed Product Item
               </Link>
-              <CardContent className="p-4 flex-grow flex flex-col">
-                <Link href={`/b/${params.businessId}/products/${product.id}`} className="hover:underline">
-                  <h3 className="text-lg font-semibold text-foreground truncate" title={product.name}>{product.name}</h3>
-                </Link>
-                <p className="text-sm text-muted-foreground mb-1">{product.category}</p>
-                <div className="flex items-center mb-2">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className={`h-4 w-4 ${i < 4 ? 'text-yellow-400 fill-yellow-400' : 'text-muted-foreground'}`} />
-                  ))}
-                  <span className="ml-1 text-xs text-muted-foreground">(123)</span>
-                </div>
-                <p className="text-xl font-bold text-primary mt-auto">₦{product.price.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</p>
-              </CardContent>
-              <CardFooter className="p-4 border-t">
-                <Button className="w-full" onClick={() => handleAddToCart(product.name)}>
-                  <ShoppingCart className="mr-2 h-4 w-4" /> Add to Cart
-                </Button>
-              </CardFooter>
-               <Button variant="ghost" size="icon" className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity z-10 h-7 w-7" onClick={() => handleEditContent(`Product: ${product.name}`)} title="Edit Product Details (Storefront)">
-                    <Edit className="h-4 w-4 text-muted-foreground" />
-                </Button>
+            </Button>
+          </div>
+          )}
+        </CardContent>
+      </Card>
+       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
+            <Card>
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-2"><Layers className="h-5 w-5 text-primary"/> Product Variations</CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <p className="text-sm text-muted-foreground">Easily manage products that come in multiple options, like different sizes or colors, each with its own SKU and stock level.</p>
+                </CardContent>
             </Card>
-          ))}
+            <Card>
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-2"><ScanBarcode className="h-5 w-5 text-primary"/> Barcode & SKU Management</CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <p className="text-sm text-muted-foreground">Assign and manage unique SKUs and barcodes for efficient tracking and point-of-sale operations.</p>
+                </CardContent>
+            </Card>
+             <Card>
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-2"><Edit3 className="h-5 w-5 text-primary"/> Rich Product Details</CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <p className="text-sm text-muted-foreground">Add comprehensive descriptions, images, and custom fields to capture all relevant product information.</p>
+                </CardContent>
+            </Card>
         </div>
-      ) : (
-        <div className="text-center py-20 border-2 border-dashed border-muted rounded-lg">
-          <Package className="mx-auto h-16 w-16 text-muted-foreground opacity-50 mb-4" />
-          <h2 className="text-2xl font-semibold">No Products Available</h2>
-          <p className="text-muted-foreground">This store is currently empty. Please check back later!</p>
-        </div>
-      )}
-       <div className="text-center mt-12">
-          <p className="text-sm text-muted-foreground">This e-commerce storefront is a Pro Feature of Zeneva.</p>
-      </div>
     </div>
   );
 }

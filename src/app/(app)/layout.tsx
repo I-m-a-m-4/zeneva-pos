@@ -3,7 +3,7 @@
 
 import type React from 'react';
 import *as React from 'react';
-import { useRouter, usePathname } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import {
   SidebarProvider,
   Sidebar,
@@ -13,7 +13,6 @@ import {
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
-  SidebarInset,
   SidebarTrigger,
 } from '@/components/ui/sidebar';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
@@ -35,10 +34,11 @@ import { useToast } from "@/hooks/use-toast";
 import CalculatorModal from '@/components/shared/calculator-modal';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
-import { AuthProvider, useAuth } from '@/context/auth-context';
+import { useAuth } from '@/context/auth-context';
 import MobileBottomNav from '@/components/layout/mobile-bottom-nav';
 import TrialExpiryBanner from '@/components/layout/trial-expiry-banner';
 import { useTheme } from 'next-themes';
+import NextTopLoader from 'nextjs-toploader';
 
 
 const navItemsConfig: (NavItem | NavItemGroup)[] = [
@@ -137,9 +137,8 @@ const searchableAppItems: SearchableAppItem[] = [
   { id: 'settings_main', title: 'Settings', href: '/settings', icon: Settings, keywords: ['configuration', 'preferences', 'options', 'app settings', 'general settings'] },
 ];
 
-function AppLayoutContent({ children }: { children: React.ReactNode }) {
+export default function AppLayout({ children }: { children: React.ReactNode }) {
   const { toast } = useToast();
-  const router = useRouter();
   const pathname = usePathname();
   const { user, status, userBusinessRoles, currentBusinessId, currentRole, currentBusiness, selectBusiness, logout } = useAuth();
   const { setTheme } = useTheme();
@@ -151,50 +150,11 @@ function AppLayoutContent({ children }: { children: React.ReactNode }) {
   const [searchResults, setSearchResults] = React.useState<SearchableAppItem[]>([]);
   const [isSearchPopoverOpen, setIsSearchPopoverOpen] = React.useState(false);
   const searchInputRef = React.useRef<HTMLInputElement>(null);
-
-  if (status === 'loading') {
-    return (
-      <div className="flex flex-col items-center justify-center h-screen bg-background">
-        <h1 className="text-7xl font-bold animate-shimmer">
-          Zeneva
-        </h1>
-      </div>
-    );
+  
+  if (status !== 'authenticated') {
+    return null;
   }
-
-  if (status === 'unauthenticated') {
-     return (
-       <div className="flex items-center justify-center h-screen bg-background">
-        <p className="text-lg text-muted-foreground">Redirecting to login...</p>
-        <Loader2 className="h-8 w-8 text-primary animate-spin ml-2" />
-      </div>
-    );
-  }
-
-  if (status === 'no_business') {
-    return (
-      <div className="flex flex-col items-center justify-center h-screen bg-background p-6 text-center">
-        <Logo size={48} className="mb-4 text-primary"/>
-        <h2 className="text-2xl font-semibold mb-2">Welcome, {user?.displayName || user?.email}!</h2>
-        <p className="text-muted-foreground mb-4">You are not yet associated with any business in Zeneva.</p>
-        <p className="text-sm text-muted-foreground mb-6">
-          If you are a business owner, you might need to create your business instance.
-          If you are staff, an administrator from your business needs to add you.
-        </p>
-        <Button onClick={logout}>Logout</Button>
-      </div>
-    );
-  }
-
-  if (!user || !currentBusinessId || !currentRole) {
-    return (
-      <div className="flex items-center justify-center h-screen bg-background">
-        <Loader2 className="h-16 w-16 animate-spin text-primary" />
-        <p className="ml-4 text-lg text-muted-foreground">Finalizing session...</p>
-      </div>
-    );
-  }
-
+  
   const handleCalculatorClick = () => setIsCalculatorOpen(true);
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -261,6 +221,17 @@ function AppLayoutContent({ children }: { children: React.ReactNode }) {
 
   return (
     <>
+      <NextTopLoader
+        color="hsl(var(--primary))"
+        initialPosition={0.08}
+        crawlSpeed={200}
+        height={3}
+        crawl={true}
+        showSpinner={false}
+        easing="ease"
+        speed={200}
+        shadow="0 0 10px hsl(var(--primary)),0 0 5px hsl(var(--primary))"
+      />
       <TooltipProvider>
         <SidebarProvider defaultOpen>
           <Sidebar variant="sidebar" collapsible="icon">
@@ -420,8 +391,8 @@ function AppLayoutContent({ children }: { children: React.ReactNode }) {
               </DropdownMenu>
             </SidebarFooter>
           </Sidebar>
-          <SidebarInset>
-            <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background/80 backdrop-blur-sm px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6 py-4">
+          <main className="flex-1">
+             <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background/80 backdrop-blur-sm px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6 py-4">
               <SidebarTrigger className="md:hidden"/>
               <div className="relative flex-1 md:grow-0">
                 <Popover open={isSearchPopoverOpen} onOpenChange={setIsSearchPopoverOpen}>
@@ -541,23 +512,15 @@ function AppLayoutContent({ children }: { children: React.ReactNode }) {
                 </DropdownMenu>
               </div>
             </header>
-            <main className="flex-1 p-4 sm:p-6 overflow-auto md:pb-6 pb-24">
+            <div className="flex-1 p-4 sm:p-6 overflow-auto md:pb-6 pb-24">
                <TrialExpiryBanner currentBusiness={currentBusiness} />
               {children}
-            </main>
-          </SidebarInset>
+            </div>
+          </main>
         </SidebarProvider>
       </TooltipProvider>
       <MobileBottomNav />
       <CalculatorModal isOpen={isCalculatorOpen} onOpenChange={setIsCalculatorOpen} />
     </>
   );
-}
-
-export default function AppLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <AuthProvider>
-      <AppLayoutContent>{children}</AppLayoutContent>
-    </AuthProvider>
-  )
 }

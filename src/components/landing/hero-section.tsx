@@ -23,7 +23,7 @@ export default function HeroSection() {
           </div>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center pt-6">
-            <Button size="lg" variant="outline" asChild className="border-white text-white hover:bg-white/10 transform hover:scale-105 transition-all duration-200">
+            <Button size="lg" variant="outline" asChild className="border-white bg-black text-white hover:bg-black/80 transform hover:scale-105 transition-all duration-200">
               <Link href="#features">Learn More</Link>
             </Button>
             <Button size="lg" asChild className="bg-white text-primary hover:bg-white/90 shadow-lg transform hover:scale-105 transition-all duration-200">
@@ -41,7 +41,7 @@ export default function HeroSection() {
             </div>
              <div className="p-2 rounded-xl bg-gradient-to-b from-gray-800 via-gray-900 to-black shadow-2xl">
                  <Image
-                    src="https://images.unsplash.com/photo-1606184545585-6a537f078536?q=80&w=1200&auto=format=fit=crop"
+                    src="https://images.unsplash.com/photo-1606184545585-6a537f078536?q=80&w=1200&auto=format&fit=crop"
                     alt="Zeneva Dashboard showing inventory insights and charts"
                     width={1200}
                     height={750}

@@ -6,16 +6,15 @@ import { getFirestore, type Firestore } from "firebase/firestore";
 // https://firebase.google.com/docs/web/setup#available-libraries
 
 // Your web app's Firebase configuration
-// IMPORTANT: Replace these with your actual Firebase project configuration values!
-// You can find these in your Firebase project settings.
+// IMPORTANT: These are now being read from your .env file
 const firebaseConfig = {
-  apiKey: "AIzaSyCUSGxzg5RgKeNe-gLyPR29eokEMBwVA0E",
-  authDomain: "zeneva-pos.firebaseapp.com",
-  projectId: "zeneva-pos",
-  storageBucket: "zeneva-pos.appspot.com",
-  messagingSenderId: "420146964253",
-  appId: "1:420146964253:web:a1f32312d8d8479f82a3f4",
-  measurementId: "G-6730LVDMCH"
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
 };
 
 // Initialize Firebase
@@ -23,16 +22,15 @@ let app: FirebaseApp;
 let db: Firestore;
 
 // Check if Firebase is configured with placeholder values
-const isPlaceholderConfig = () => {
-  return (
-    firebaseConfig.apiKey.startsWith("AIzaSyCUSGxzg5RgKeNe-gLyPR29eokEMBwVA0E") ||
-    firebaseConfig.authDomain.startsWith("zeneva-pos.firebaseapp.com") ||
-    firebaseConfig.projectId.startsWith("zeneva-pos")
-  );
+export const isPlaceholderConfig = () => {
+  return !firebaseConfig.apiKey || firebaseConfig.apiKey.includes("YOUR_");
 };
 
 
 if (getApps().length === 0) {
+  if (isPlaceholderConfig()) {
+     console.error("CRITICAL: Firebase is not configured with real credentials. The app will not function correctly. Please update your .env file.");
+  }
   app = initializeApp(firebaseConfig);
   console.log("Firebase initialized");
 } else {
@@ -42,7 +40,7 @@ if (getApps().length === 0) {
 
 db = getFirestore(app);
 
-export { app, db, isPlaceholderConfig };
+export { app, db };
 
 // ====================================================================================
 // FIRESTORE SECURITY RULES (COPY AND PASTE THIS ENTIRE BLOCK INTO YOUR FIREBASE CONSOLE)
@@ -168,5 +166,3 @@ service cloud.firestore {
 // ====================================================================================
 // END OF FIRESTORE SECURITY RULES
 // ====================================================================================
-
-    

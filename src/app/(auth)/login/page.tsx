@@ -15,6 +15,7 @@ import { app, db } from '@/lib/firebase';
 import { Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose, DialogTrigger } from '@/components/ui/dialog';
+import { useAuth } from '@/context/auth-context';
 
 export default function LoginPage() {
   const [isSigningUp, setIsSigningUp] = React.useState(false);
@@ -23,6 +24,8 @@ export default function LoginPage() {
   const { toast } = useToast();
   const router = useRouter();
   const auth = getAuth(app);
+  const { status } = useAuth();
+
 
   // Sign Up State
   const [signUpBusinessName, setSignUpBusinessName] = React.useState('');
@@ -82,8 +85,8 @@ export default function LoginPage() {
         title: 'Account Created!',
         description: 'Welcome to Zeneva! Redirecting you to your dashboard.',
       });
-
-      router.push('/dashboard');
+      
+      // router.push('/dashboard'); // AuthProvider will handle the redirect
 
     } catch (error: any) {
       console.error("Sign up error:", error);
@@ -108,7 +111,7 @@ export default function LoginPage() {
             title: 'Login Successful!',
             description: "Welcome back! Redirecting...",
         });
-        router.push('/dashboard');
+        // router.push('/dashboard'); // AuthProvider will handle the redirect
     } catch (error: any) {
         console.error("Sign in error:", error);
         toast({
@@ -146,6 +149,12 @@ export default function LoginPage() {
       setIsResettingPassword(false);
     }
   };
+  
+  React.useEffect(() => {
+    if (status === 'authenticated') {
+      router.replace('/dashboard');
+    }
+  }, [status, router]);
 
   return (
     <Tabs defaultValue="signin" className="w-full">

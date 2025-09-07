@@ -1,34 +1,61 @@
 
 "use client";
 
+import * as React from 'react';
 import PageTitle from '@/components/shared/page-title';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { ShoppingCart, PlusCircle, ReceiptText, BarChart, Search, Filter, Printer, CreditCardIcon, Info, MoreVertical, Eye } from 'lucide-react';
+import { ShoppingCart, PlusCircle, ReceiptText, BarChart, Search, Filter, Printer, CreditCardIcon, Info, MoreVertical, Eye, Loader2 } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 import type { Receipt } from '@/types';
-import { mockReceipts } from '@/lib/data';
 import { Badge } from '@/components/ui/badge';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useRouter } from 'next/navigation';
-import type { Metadata } from 'next'; // Import Metadata
-
-// export const metadata: Metadata = { // This page is client component, metadata here is not directly used by Next.js
-//   title: "Sales & POS - Zeneva",
-//   description: "Manage sales transactions and access the Point of Sale system with Zeneva. Efficiently process sales for your Nigerian business.",
-// };
+import { useAuth } from '@/context/auth-context';
+import { db } from '@/lib/firebase';
+import { collection, query, where, orderBy, getDocs, limit } from 'firebase/firestore';
 
 
 type SaleTransaction = Receipt;
 
 export default function SalesPage() {
-  const salesTransactions: SaleTransaction[] = mockReceipts.slice(0, 3);
+  const [salesTransactions, setSalesTransactions] = React.useState<SaleTransaction[]>([]);
+  const [isLoading, setIsLoading] = React.useState(true);
   const { toast } = useToast();
   const router = useRouter();
+  const { currentBusinessId } = useAuth();
+
+
+  React.useEffect(() => {
+    if (!currentBusinessId) {
+        setIsLoading(false);
+        return;
+    };
+
+    const fetchSales = async () => {
+        setIsLoading(true);
+        try {
+            const q = query(
+                collection(db, "receipts"),
+                where("businessId", "==", currentBusinessId),
+                orderBy("date", "desc"),
+                limit(10) // Fetch latest 10 sales for this page
+            );
+            const querySnapshot = await getDocs(q);
+            const sales = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Receipt));
+            setSalesTransactions(sales);
+        } catch (error) {
+            console.error("Error fetching sales transactions:", error);
+            toast({ variant: 'destructive', title: 'Error', description: 'Could not fetch recent sales.'});
+        } finally {
+            setIsLoading(false);
+        }
+    };
+    fetchSales();
+  }, [currentBusinessId, toast]);
 
   const handleNewSale = () => {
-    // Navigate to the first step of the POS flow
     router.push('/sales/pos/select-products');
   };
 
@@ -42,14 +69,16 @@ export default function SalesPage() {
       </PageTitle>
       <Card>
         <CardHeader>
-          <CardTitle>Past Sales Transactions</CardTitle>
+          <CardTitle>Recent Sales Transactions</CardTitle>
           <CardDescription>
-            View a comprehensive list of all past transactions.
+            View a list of your most recent transactions.
             Filter, search, and view details for each sale.
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {salesTransactions.length > 0 ? (
+          {isLoading ? (
+            <div className="flex justify-center items-center h-40"><Loader2 className="h-10 w-10 animate-spin text-primary"/></div>
+          ) : salesTransactions.length > 0 ? (
             <>
               <div className="mb-4 flex flex-col md:flex-row items-center gap-2">
                  <div className="flex items-center gap-2 w-full md:w-1/2">

@@ -2,10 +2,10 @@
 "use client";
 
 import *as React from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { getAuth, onAuthStateChanged, signOut, type User } from 'firebase/auth';
 import { doc, getDoc, collection, query, where, getDocs } from 'firebase/firestore';
-import { app, db, isPlaceholderConfig } from '@/lib/firebase';
+import { app, db } from '@/lib/firebase';
 import type {
   AuthContextType,
   AuthState,
@@ -17,6 +17,8 @@ import type {
   AuthStatus,
   UserStaff,
 } from '@/types';
+import { Loader2 } from 'lucide-react';
+import Logo from '@/components/icons/logo';
 
 const AuthContext = React.createContext<AuthContextType | undefined>(undefined);
 
@@ -34,26 +36,25 @@ const initialState: AuthState = {
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [state, setState] = React.useState<AuthState>(initialState);
   const router = useRouter();
+  const pathname = usePathname();
   const auth = getAuth(app);
 
-  const fetchUserRolesAndSelectFirstBusiness = React.useCallback(async (userId: string): Promise<void> => {
+  const fetchUserRolesAndSelectFirstBusiness = React.useCallback(async (user: UserProfile): Promise<void> => {
     try {
-      const userRef = doc(db, "users", userId);
+      const userRef = doc(db, "users", user.uid);
       const userSnap = await getDoc(userRef);
 
       if (!userSnap.exists()) {
-          console.warn(`No user document found for UID: ${userId}`);
-          setState(prev => ({ ...prev, status: 'no_business', userBusinessRoles: [], error: new Error("User profile not found in database.") }));
+          console.warn(`No user document found for UID: ${user.uid}`);
+          setState(prev => ({ ...prev, status: 'no_business', user, error: new Error("User profile not found in database.") }));
           return;
       }
       
       const userData = userSnap.data() as UserStaff;
-
-      // In a multi-business scenario, you might query where user is a member.
-      // For this 1-to-1 model, we fetch the single business instance they belong to.
       const businessId = userData.businessId;
+
       if (!businessId) {
-          setState(prev => ({ ...prev, status: 'no_business', error: new Error("User is not associated with a business.") }));
+          setState(prev => ({ ...prev, status: 'no_business', user, error: new Error("User is not associated with a business.") }));
           return;
       }
 
@@ -61,7 +62,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const businessDocSnap = await getDoc(businessDocRef);
 
       if (!businessDocSnap.exists()) {
-          setState(prev => ({ ...prev, status: 'no_business', error: new Error(`Business instance ${businessId} not found.`) }));
+          setState(prev => ({ ...prev, status: 'no_business', user, error: new Error(`Business instance ${businessId} not found.`) }));
           return;
       }
       
@@ -75,6 +76,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       setState(prev => ({
         ...prev,
+        user,
         status: 'authenticated',
         userBusinessRoles: roles,
         currentBusinessId: businessId,
@@ -86,42 +88,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     } catch (error) {
       console.error("Error fetching user roles:", error);
-      setState(prev => ({ ...prev, status: 'unauthenticated', error: new Error("Failed to fetch user data.") }));
+      setState(prev => ({ ...prev, status: 'unauthenticated', user, error: new Error("Failed to fetch user data.") }));
     }
   }, []);
-
 
   React.useEffect(() => {
-    if (isPlaceholderConfig()) {
-      console.error("CRITICAL: Firebase is not configured with real credentials. The app will not function correctly. Please update src/lib/firebase.ts");
-      setState(prev => ({ ...prev, status: 'unauthenticated', error: new Error("Firebase credentials are not configured.") }));
-      router.push('/login');
-      return;
-    }
-
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
-        setState(prev => ({ ...prev, status: 'loading', user: { uid: user.uid, email: user.email, displayName: user.displayName, photoURL: user.photoURL } }));
-        fetchUserRolesAndSelectFirstBusiness(user.uid);
+        if (state.status !== 'authenticated') {
+           setState(prev => ({ ...prev, status: 'loading' }));
+           fetchUserRolesAndSelectFirstBusiness({ uid: user.uid, email: user.email, displayName: user.displayName, photoURL: user.photoURL });
+        }
       } else {
-        setState(initialState); // Reset state to initial
-        router.push('/login');  // Redirect to login if user is not found
+        setState({ ...initialState, status: 'unauthenticated' });
       }
     });
-
     return () => unsubscribe();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-
-  const login = async (userProfile: UserProfile) => {
-    // This would be used if you had a custom login form instead of relying on onAuthStateChanged
-  };
+  }, [auth, fetchUserRolesAndSelectFirstBusiness, state.status]);
 
   const logout = async () => {
     try {
         await signOut(auth);
-        setState(initialState);
+        setState({ ...initialState, status: 'unauthenticated' });
         router.push('/login');
     } catch (error) {
         console.error("Error signing out: ", error);
@@ -129,7 +117,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const selectBusiness = async (businessId: string) => {
-    // This function can remain for multi-business scenarios in the future.
     setState(prev => ({ ...prev, status: 'loading' }));
     const roleInfo = state.userBusinessRoles.find(r => r.businessId === businessId);
     if (roleInfo && state.user) {
@@ -146,9 +133,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           businessSettings: businessData.settings || null,
         }));
       }
-    } else {
-      console.error(`AuthContext: User does not have a role in business ${businessId} or roles not loaded.`);
-      setState(prev => ({ ...prev, status: 'no_business', error: new Error("Cannot select business: role not found.") }));
     }
   };
   
@@ -160,12 +144,46 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     });
   };
 
+  // Centralized redirect and loading logic
+  if (state.status === 'loading' && !pathname.startsWith('/login')) {
+     return (
+       <div className="flex flex-col items-center justify-center h-screen bg-background">
+         <h1 className="text-7xl font-bold animate-shimmer">Zeneva</h1>
+         <p className="text-muted-foreground mt-2">Loading your business...</p>
+       </div>
+    );
+  }
+
+  if (state.status === 'unauthenticated' && !pathname.startsWith('/login') && !pathname.startsWith('/(marketing)')) {
+    if (typeof window !== 'undefined') {
+      router.push('/login');
+    }
+    return (
+        <div className="flex flex-col items-center justify-center h-screen bg-background">
+          <h1 className="text-7xl font-bold animate-shimmer">Zeneva</h1>
+          <p className="text-muted-foreground mt-2">Redirecting to login...</p>
+        </div>
+    );
+  }
+  
+  if (state.status === 'no_business' && !pathname.startsWith('/login')) {
+     return (
+      <div className="flex flex-col items-center justify-center h-screen bg-background p-6 text-center">
+        <Logo size={48} className="mb-4 text-primary"/>
+        <h2 className="text-2xl font-semibold mb-2">Welcome, {state.user?.displayName || state.user?.email}!</h2>
+        <p className="text-muted-foreground mb-4">You are not yet associated with any business in Zeneva.</p>
+        <p className="text-sm text-muted-foreground mb-6">
+          Please contact your administrator to be added to a business, or create a new one if you are the owner.
+        </p>
+        <Button onClick={logout}>Logout</Button>
+      </div>
+    );
+  }
 
   return (
     <AuthContext.Provider
       value={{
         ...state,
-        login,
         logout,
         selectBusiness,
         fetchUserRolesAndSelectFirstBusiness,
