@@ -283,7 +283,7 @@ export interface AuthState {
 export interface AuthContextType extends AuthState {
   logout: () => void; 
   selectBusiness: (businessId: string) => Promise<void>; 
-  fetchUserRolesAndSelectFirstBusiness: (user: import('firebase/auth').User) => Promise<void>;
+  fetchUserRolesAndSelectFirstBusiness: (user: UserProfile) => Promise<void>;
   updateCurrentBusiness: (updates: Partial<BusinessInstance>) => void;
 }
 

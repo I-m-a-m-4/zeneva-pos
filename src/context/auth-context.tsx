@@ -33,7 +33,7 @@ const initialState: AuthState = {
   error: null,
 };
 
-const publicPaths = ['/login', '/about', '/contact', '/blog', '/privacy', '/terms', '/checkout'];
+const publicPaths = ['/', '/login', '/about', '/contact', '/blog', '/privacy', '/terms', '/checkout'];
 
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -158,7 +158,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     );
   }
 
-  const isPublicPath = pathname === '/' || publicPaths.some(p => pathname.startsWith(p));
+  const isPublicPath = publicPaths.some(p => pathname.startsWith(p) || pathname === '/');
 
   if (state.status === 'unauthenticated' && !isPublicPath) {
     if (typeof window !== 'undefined') {
