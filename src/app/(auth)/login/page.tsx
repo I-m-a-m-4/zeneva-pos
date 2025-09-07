@@ -83,7 +83,7 @@ export default function LoginPage() {
       toast({
         variant: 'success',
         title: 'Account Created Successfully!',
-        description: `Welcome to Zeneva, ${signUpFullName}! Your new business, "${signUpBusinessName}", is ready.`,
+        description: `Welcome to Zeneva, ${signUpFullName}! Your new business, "${signUpBusinessName}", is ready. You will be redirected shortly.`,
         duration: 7000
       });
       
@@ -93,7 +93,7 @@ export default function LoginPage() {
       console.error("Sign up error:", error);
       let errorMessage = 'An unexpected error occurred.';
       if (error.code === 'auth/email-already-in-use') {
-          errorMessage = 'This email is already in use. Please try logging in or use a different email.';
+          errorMessage = 'This email is already registered. Please sign in or use a different email.';
       } else if (error.code === 'auth/weak-password') {
           errorMessage = 'The password is too weak. Please use at least 6 characters.';
       } else {
@@ -123,10 +123,14 @@ export default function LoginPage() {
         // The AuthProvider will handle the redirect upon successful authentication state change.
     } catch (error: any) {
         console.error("Sign in error:", error);
+        
+        let description = "The email or password you entered is incorrect. This can happen after system updates. Please try creating a new account using the 'Create Account' tab, as your old credentials may no longer be valid.";
+        
         toast({
             variant: 'destructive',
-            title: 'Sign In Failed',
-            description: "Invalid email or password. Please check your credentials and try again.",
+            title: 'Sign In Failed (Invalid Credentials)',
+            description: description,
+            duration: 10000
         });
     } finally {
         setIsSigningIn(false);
@@ -166,7 +170,7 @@ export default function LoginPage() {
   }, [status, router]);
 
   return (
-    <Tabs defaultValue="signin" className="w-full">
+    <Tabs defaultValue="signup" className="w-full">
       <TabsList className="grid w-full grid-cols-2">
         <TabsTrigger value="signin">Sign In</TabsTrigger>
         <TabsTrigger value="signup">Create Account</TabsTrigger>
@@ -269,4 +273,3 @@ export default function LoginPage() {
     </Tabs>
   );
 }
-

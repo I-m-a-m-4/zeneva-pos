@@ -1,7 +1,7 @@
 
 "use client";
 
-import * as React from 'react';
+import *as React from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
@@ -116,7 +116,7 @@ export default function SelectCustomerPage() {
           phone: newCustomerPhone,
           businessId: currentBusinessId,
           totalSpent: 0,
-          status: "New",
+          status: "New" as const, // Explicitly cast to literal type
           createdAt: serverTimestamp(),
           updatedAt: serverTimestamp(),
         };
