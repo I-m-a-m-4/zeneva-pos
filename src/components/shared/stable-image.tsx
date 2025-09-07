@@ -1,15 +1,14 @@
-
 "use client";
 
-import * as React from 'react';
+import *as React from 'react';
 import Image, { type ImageProps } from 'next/image';
 
 interface StableImageProps extends Omit<ImageProps, 'src'> {
   src?: string | null;
-  placeholder: string;
+  placeholderSrc: string;
 }
 
-export default function StableImage({ src, placeholder, ...props }: StableImageProps) {
+export default function StableImage({ src, placeholderSrc, ...props }: StableImageProps) {
   const [imgSrc, setImgSrc] = React.useState(src);
   const [hasError, setHasError] = React.useState(false);
 
@@ -21,7 +20,7 @@ export default function StableImage({ src, placeholder, ...props }: StableImageP
 
   const handleImageError = () => {
     if (!hasError) {
-      setImgSrc(placeholder);
+      setImgSrc(placeholderSrc);
       setHasError(true);
     }
   };
@@ -29,7 +28,7 @@ export default function StableImage({ src, placeholder, ...props }: StableImageP
   return (
     <Image
       {...props}
-      src={imgSrc || placeholder}
+      src={imgSrc || placeholderSrc}
       onError={handleImageError}
     />
   );

@@ -238,7 +238,7 @@ export default function AddProductPage() {
                           />
                           <div className="mt-2 w-full aspect-square rounded-md border-2 border-dashed border-muted bg-muted/50 flex flex-col items-center justify-center" data-ai-hint="image upload box">
                             {imagePreview ? (
-                              <StableImage src={imagePreview} placeholder="https://placehold.co/200x200" alt="Product preview" className="w-full h-full rounded-md object-cover" width={200} height={200} data-ai-hint="new product photo" />
+                              <StableImage src={imagePreview} placeholderSrc="https://placehold.co/200x200" alt="Product preview" className="w-full h-full rounded-md object-cover" width={200} height={200} data-ai-hint="new product photo" />
                             ) : (
                                <>
                                 <ImagePlus className="h-12 w-12 text-muted-foreground mb-2" />

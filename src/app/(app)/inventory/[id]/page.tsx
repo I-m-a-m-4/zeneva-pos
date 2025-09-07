@@ -149,7 +149,7 @@ export default function InventoryItemPage() {
               className="aspect-square rounded-lg object-cover w-full border"
               height={300}
               src={item.imageUrl}
-              placeholder='https://placehold.co/300x300'
+              placeholderSrc='https://placehold.co/300x300'
               width={300}
               data-ai-hint={item.dataAiHint || "product photo detail"}
             />

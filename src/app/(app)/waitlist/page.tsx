@@ -168,7 +168,7 @@ export default function WaitlistPage() {
                       <TableCell className="hidden sm:table-cell">
                         <StableImage
                           src={item.productImageUrl}
-                          placeholder="https://placehold.co/64x64"
+                          placeholderSrc="https://placehold.co/64x64"
                           alt={item.productName}
                           width={48}
                           height={48}

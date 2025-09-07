@@ -296,7 +296,7 @@ export default function SelectProductsPage() {
                         return (
                              <Card key={product.id} className="p-2 flex items-center gap-3">
                                 <StableImage
-                                    src={product.imageUrl} placeholder="https://placehold.co/64x64" alt={product.name}
+                                    src={product.imageUrl} placeholderSrc="https://placehold.co/64x64" alt={product.name}
                                     width={64} height={64} className="rounded-md object-cover border" data-ai-hint={product.dataAiHint || 'product photo'}
                                 />
                                 <div className="flex-grow">
@@ -318,7 +318,7 @@ export default function SelectProductsPage() {
                         <div className={cn("relative w-full bg-muted", layout === 'compact-grid' ? 'aspect-square' : 'aspect-video')}>
                           <StableImage
                             src={product.imageUrl}
-                            placeholder={`https://placehold.co/${layout === 'compact-grid' ? '300x300' : '400x300'}`}
+                            placeholderSrc={`https://placehold.co/${layout === 'compact-grid' ? '300x300' : '400x300'}`}
                             alt={product.name}
                             fill
                             className="object-cover"
@@ -392,7 +392,7 @@ export default function SelectProductsPage() {
                   <div key={item.itemId} className="flex items-center gap-2 p-2 border rounded-md bg-muted/30">
                     <StableImage
                       src={item.imageUrl}
-                      placeholder="https://placehold.co/36x36"
+                      placeholderSrc="https://placehold.co/36x36"
                       alt={item.itemName}
                       width={36} height={36}
                       className="rounded object-cover border flex-shrink-0"

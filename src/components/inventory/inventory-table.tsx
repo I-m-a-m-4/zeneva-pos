@@ -133,7 +133,7 @@ export function InventoryTable({ items, onItemsChange }: InventoryTableProps) {
                         className="aspect-square rounded-md object-cover border"
                         height="64"
                         src={item.imageUrl}
-                        placeholder="https://placehold.co/64x64"
+                        placeholderSrc="https://placehold.co/64x64"
                         width="64"
                         data-ai-hint={item.dataAiHint || "product item small"}
                       />
