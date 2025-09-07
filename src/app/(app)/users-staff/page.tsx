@@ -1,4 +1,3 @@
-
 "use client";
 
 import *as React from 'react';
@@ -17,7 +16,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import type { UserStaff, UserRole } from '@/types';
 import { useAuth } from '@/context/auth-context';
 import { db } from '@/lib/firebase';
-import { collection, addDoc, updateDoc, deleteDoc, serverTimestamp, query, where, getDocs } from "firebase/firestore";
+import { collection, addDoc, updateDoc, deleteDoc, serverTimestamp, query, where, getDocs, doc } from "firebase/firestore";
 
 
 const OWNER_ACCESS_KEY_STORAGE = "zeneva-inventory-owner-access-key";
