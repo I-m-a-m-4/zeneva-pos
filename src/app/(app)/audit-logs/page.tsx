@@ -16,14 +16,14 @@ import { db } from '@/lib/firebase';
 import { useToast } from '@/hooks/use-toast';
 
 export default function AuditLogsPage() {
-  const { currentRole, currentBusinessId, user } = useAuth();
+  const { currentRole, currentBusinessId, user, status: authStatus } = useAuth();
   const router = useRouter();
   const { toast } = useToast();
   const [auditLogs, setAuditLogs] = React.useState<AuditLogEntry[]>([]);
   const [isLoading, setIsLoading] = React.useState(true);
 
   React.useEffect(() => {
-    if (currentRole !== 'admin') {
+    if (authStatus !== 'loading' && currentRole !== 'admin') {
       router.replace('/dashboard');
       return;
     }
@@ -44,9 +44,9 @@ export default function AuditLogsPage() {
         toast({ variant: 'destructive', title: 'Error', description: 'Could not fetch audit logs.'});
       }).finally(() => setIsLoading(false));
     }
-  }, [currentRole, router, currentBusinessId, user, toast]);
+  }, [currentRole, router, currentBusinessId, user, toast, authStatus]);
 
-  if (currentRole !== 'admin' && authStatus !== 'loading') {
+  if (authStatus === 'loading' || (currentRole !== 'admin' && authStatus !== 'unauthenticated')) {
     return <div className="flex justify-center items-center h-64"><Loader2 className="h-8 w-8 animate-spin text-primary" /> <span className="ml-2">Verifying access...</span></div>;
   }
 
