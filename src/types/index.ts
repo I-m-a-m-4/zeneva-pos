@@ -99,6 +99,7 @@ export interface NavItemGroup {
   type: 'group';
   children: NavItem[];
   roles?: UserRole[]; 
+  label?: string;
 }
 
 export interface SearchableAppItem {
@@ -283,10 +284,9 @@ export interface AuthState {
 }
 
 export interface AuthContextType extends AuthState {
-  login: (user: UserProfile) => void; 
   logout: () => void; 
   selectBusiness: (businessId: string) => Promise<void>; 
-  fetchUserRolesAndSelectFirstBusiness: (userId: string) => Promise<void>;
+  fetchUserRolesAndSelectFirstBusiness: (user: User) => Promise<void>;
   updateCurrentBusiness: (updates: Partial<BusinessInstance>) => void;
 }
 
