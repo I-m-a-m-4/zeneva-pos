@@ -285,7 +285,7 @@ export default function SettingsPage() {
       
       // Update local auth context to reflect changes immediately
       if(user) {
-        await fetchUserRolesAndSelectFirstBusiness(user.uid);
+        await fetchUserRolesAndSelectFirstBusiness(user);
       }
 
       toast({
@@ -913,3 +913,5 @@ export default function SettingsPage() {
     </div>
   );
 }
+
+    
