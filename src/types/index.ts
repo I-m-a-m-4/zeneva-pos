@@ -48,7 +48,7 @@ export interface Receipt {
   notes?: string;
   createdAt?: any; 
   updatedAt?: any; 
-  customerDetails?: Partial<Customer>;
+  customerDetails?: Customer;
 }
 
 export interface PaymentRecord {
@@ -283,7 +283,7 @@ export interface AuthState {
 export interface AuthContextType extends AuthState {
   logout: () => void; 
   selectBusiness: (businessId: string) => Promise<void>; 
-  fetchUserRolesAndSelectFirstBusiness: (user: User) => Promise<void>;
+  fetchUserRolesAndSelectFirstBusiness: (user: import('firebase/auth').User) => Promise<void>;
   updateCurrentBusiness: (updates: Partial<BusinessInstance>) => void;
 }
 
