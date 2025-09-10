@@ -114,6 +114,7 @@ export default function ProductItemsPage() {
                                 height="48"
                                 src={item.imageUrl || "https://placehold.co/48x48"}
                                 placeholder="empty"
+                                placeholderSrc="https://placehold.co/48x48"
                                 width="48"
                                 data-ai-hint={item.dataAiHint || "product item small"}
                               />
