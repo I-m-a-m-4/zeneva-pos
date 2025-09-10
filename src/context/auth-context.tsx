@@ -1,7 +1,6 @@
-
 "use client";
 
-import *as React from 'react';
+import * as React from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { getAuth, onAuthStateChanged, signOut, type User } from 'firebase/auth';
 import { doc, getDoc, collection, query, where, getDocs } from 'firebase/firestore';
@@ -35,7 +34,6 @@ const initialState: AuthState = {
 
 const publicPaths = ['/', '/login', '/about', '/contact', '/blog', '/privacy', '/terms', '/checkout'];
 
-
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [state, setState] = React.useState<AuthState>(initialState);
   const router = useRouter();
@@ -48,33 +46,33 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const userSnap = await getDoc(userRef);
 
       if (!userSnap.exists()) {
-          console.warn(`No user document found for UID: ${user.uid}`);
-          setState(prev => ({ ...prev, status: 'no_business', user, error: new Error("User profile not found in database.") }));
-          return;
+        console.warn(`No user document found for UID: ${user.uid}`);
+        setState(prev => ({ ...prev, status: 'no_business', user, error: new Error("User profile not found in database.") }));
+        return;
       }
       
       const userData = userSnap.data() as UserStaff;
       const businessId = userData.businessId;
 
       if (!businessId) {
-          setState(prev => ({ ...prev, status: 'no_business', user, error: new Error("User is not associated with a business.") }));
-          return;
+        setState(prev => ({ ...prev, status: 'no_business', user, error: new Error("User is not associated with a business.") }));
+        return;
       }
 
       const businessDocRef = doc(db, "businessInstances", businessId);
       const businessDocSnap = await getDoc(businessDocRef);
 
       if (!businessDocSnap.exists()) {
-          setState(prev => ({ ...prev, status: 'no_business', user, error: new Error(`Business instance ${businessId} not found.`) }));
-          return;
+        setState(prev => ({ ...prev, status: 'no_business', user, error: new Error(`Business instance ${businessId} not found.`) }));
+        return;
       }
       
       const businessData = businessDocSnap.data() as BusinessInstance;
       
       const roles: UserBusinessRole[] = [{
-          businessId: businessId,
-          businessName: businessData.businessName,
-          role: userData.role
+        businessId: businessId,
+        businessName: businessData.businessName,
+        role: userData.role
       }];
 
       setState(prev => ({
@@ -84,7 +82,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         userBusinessRoles: roles,
         currentBusinessId: businessId,
         currentRole: userData.role,
-        currentBusiness: { id: businessId, ...businessData },
+        currentBusiness: { ...businessData }, // Removed redundant id: businessId
         businessSettings: businessData.settings || null,
         error: null,
       }));
@@ -99,8 +97,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         if (state.status !== 'authenticated') {
-           setState(prev => ({ ...prev, status: 'loading' }));
-           fetchUserRolesAndSelectFirstBusiness({ uid: user.uid, email: user.email, displayName: user.displayName, photoURL: user.photoURL });
+          setState(prev => ({ ...prev, status: 'loading' }));
+          fetchUserRolesAndSelectFirstBusiness({ uid: user.uid, email: user.email, displayName: user.displayName, photoURL: user.photoURL });
         }
       } else {
         setState({ ...initialState, status: 'unauthenticated' });
@@ -112,11 +110,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const logout = async () => {
     try {
-        await signOut(auth);
-        setState({ ...initialState, status: 'unauthenticated' });
-        router.push('/login');
+      await signOut(auth);
+      setState({ ...initialState, status: 'unauthenticated' });
+      router.push('/login');
     } catch (error) {
-        console.error("Error signing out: ", error);
+      console.error("Error signing out: ", error);
     }
   };
 
@@ -133,7 +131,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           status: 'authenticated',
           currentBusinessId: businessId,
           currentRole: roleInfo.role,
-          currentBusiness: { id: businessId, ...businessData },
+          currentBusiness: { ...businessData }, // Removed redundant id: businessId
           businessSettings: businessData.settings || null,
         }));
       }
@@ -142,19 +140,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   
   const updateCurrentBusiness = (updates: Partial<BusinessInstance>) => {
     setState(prev => {
-        if (!prev.currentBusiness) return prev;
-        const updatedBusiness = { ...prev.currentBusiness, ...updates };
-        return { ...prev, currentBusiness: updatedBusiness };
+      if (!prev.currentBusiness) return prev;
+      const updatedBusiness = { ...prev.currentBusiness, ...updates };
+      return { ...prev, currentBusiness: updatedBusiness };
     });
   };
 
   // Centralized redirect and loading logic
   if (state.status === 'loading' && !pathname.startsWith('/login')) {
-     return (
-       <div className="flex flex-col items-center justify-center h-screen bg-background">
-         <h1 className="text-7xl font-bold animate-shimmer">Zeneva</h1>
-         <p className="text-muted-foreground mt-2">Loading your business...</p>
-       </div>
+    return (
+      <div className="flex flex-col items-center justify-center h-screen bg-background">
+        <h1 className="text-7xl font-bold animate-shimmer">Zeneva</h1>
+        <p className="text-muted-foreground mt-2">Loading your business...</p>
+      </div>
     );
   }
 
@@ -165,15 +163,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       router.push('/login');
     }
     return (
-        <div className="flex flex-col items-center justify-center h-screen bg-background">
-          <h1 className="text-7xl font-bold animate-shimmer">Zeneva</h1>
-          <p className="text-muted-foreground mt-2">Redirecting to login...</p>
-        </div>
+      <div className="flex flex-col items-center justify-center h-screen bg-background">
+        <h1 className="text-7xl font-bold animate-shimmer">Zeneva</h1>
+        <p className="text-muted-foreground mt-2">Redirecting to login...</p>
+      </div>
     );
   }
   
   if (state.status === 'no_business' && !isPublicPath) {
-     return (
+    return (
       <div className="flex flex-col items-center justify-center h-screen bg-background p-6 text-center">
         <Logo size={48} className="mb-4 text-primary"/>
         <h2 className="text-2xl font-semibold mb-2">Welcome, {state.user?.displayName || state.user?.email}!</h2>
