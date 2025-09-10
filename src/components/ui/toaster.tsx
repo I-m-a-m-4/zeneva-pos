@@ -1,4 +1,3 @@
-
 "use client"
 
 import {
@@ -10,7 +9,10 @@ import {
   ToastViewport,
 } from "@/components/ui/toast"
 import { useToast } from "@/hooks/use-toast"
-import { CheckCircle2, AlertTriangle, XCircle, Info } from 'lucide-react';
+import { CheckCircle2, AlertTriangle, Info } from 'lucide-react';
+
+// Define the possible variant values
+type ToastVariant = "success" | "destructive" | "default";
 
 export function Toaster() {
   const { toasts } = useToast()
@@ -22,10 +24,10 @@ export function Toaster() {
           success: <CheckCircle2 className="h-6 w-6 text-green-600" />,
           destructive: <AlertTriangle className="h-6 w-6 text-destructive" />,
           default: <Info className="h-6 w-6 text-primary" />,
-        }[variant || "default"]
+        }[variant as ToastVariant || "default"]
 
         return (
-          <Toast key={id} variant={variant} {...props}>
+          <Toast key={id} variant={variant as ToastVariant} {...props}>
             <div className="flex items-start gap-3">
               <span className="mt-0.5">{Icon}</span>
               <div className="grid gap-1">
