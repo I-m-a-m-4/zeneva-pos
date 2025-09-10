@@ -2,13 +2,38 @@
 "use client";
 
 import Link from 'next/link';
+import * as React from 'react';
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 import { PlayCircle } from 'lucide-react';
 
 export default function HeroSection() {
+    const heroRef = React.useRef<HTMLElement>(null);
+
+    React.useEffect(() => {
+        const handleMouseMove = (event: MouseEvent) => {
+            if (heroRef.current) {
+                const { clientX, clientY } = event;
+                const { left, top } = heroRef.current.getBoundingClientRect();
+                heroRef.current.style.setProperty('--mouse-x', `${clientX - left}px`);
+                heroRef.current.style.setProperty('--mouse-y', `${clientY - top}px`);
+            }
+        };
+
+        const currentRef = heroRef.current;
+        if (currentRef) {
+            currentRef.addEventListener('mousemove', handleMouseMove);
+        }
+
+        return () => {
+            if (currentRef) {
+                currentRef.removeEventListener('mousemove', handleMouseMove);
+            }
+        };
+    }, []);
+
   return (
-    <section className="bg-primary text-primary-foreground relative overflow-hidden bg-grid-pattern">
+    <section ref={heroRef} className="hero-section bg-primary text-primary-foreground relative overflow-hidden bg-grid-pattern">
       <div className="container px-4 md:px-6 relative z-10">
         <div className="flex flex-col items-center justify-center space-y-4 text-center py-20 md:py-28 lg:py-32">
           

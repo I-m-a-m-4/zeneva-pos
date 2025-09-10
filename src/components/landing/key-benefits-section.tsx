@@ -17,7 +17,7 @@ const benefits = [
     icon: <BarChartHorizontalBig className="h-8 w-8 text-primary mb-3" />,
     title: "Automatic Reordering",
     description: "Set reorder points and let Zeneva automatically generate purchase orders when stock is low, saving you time and effort.",
-    imageUrl: "https://images.unsplash.com/photo-1542382257-80ded25d7588?q=80&w=1200&auto=format&fit=crop",
+    imageUrl: "https://images.unsplash.com/photo-1576185250352-17515b331500?q=80&w=1200&auto=format&fit=crop",
     imageHint: "inventory management in a warehouse"
   },
   {
