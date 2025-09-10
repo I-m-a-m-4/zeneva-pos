@@ -112,8 +112,8 @@ export default function ProductItemsPage() {
                                 alt={item.name}
                                 className="aspect-square rounded-md object-cover border hidden sm:block"
                                 height="48"
-                                src={item.imageUrl}
-                                placeholder="https://placehold.co/48x48"
+                                src={item.imageUrl || "https://placehold.co/48x48"}
+                                placeholder="empty"
                                 width="48"
                                 data-ai-hint={item.dataAiHint || "product item small"}
                               />
