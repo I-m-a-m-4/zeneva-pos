@@ -18,6 +18,7 @@ import type {
 } from '@/types';
 import { Loader2 } from 'lucide-react';
 import Logo from '@/components/icons/logo';
+import { Button } from '@/components/ui/button';
 
 const AuthContext = React.createContext<AuthContextType | undefined>(undefined);
 
@@ -82,7 +83,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         userBusinessRoles: roles,
         currentBusinessId: businessId,
         currentRole: userData.role,
-        currentBusiness: { ...businessData }, // Removed redundant id: businessId
+        currentBusiness: { ...businessData },
         businessSettings: businessData.settings || null,
         error: null,
       }));
@@ -131,7 +132,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           status: 'authenticated',
           currentBusinessId: businessId,
           currentRole: roleInfo.role,
-          currentBusiness: { ...businessData }, // Removed redundant id: businessId
+          currentBusiness: { ...businessData },
           businessSettings: businessData.settings || null,
         }));
       }

@@ -1,8 +1,5 @@
-
-import type {NextConfig} from 'next';
-
-const nextConfig: NextConfig = {
-  /* config options here */
+/** @type {import('next').NextConfig} */
+const nextConfig = {
   images: {
     remotePatterns: [
       {
@@ -17,7 +14,7 @@ const nextConfig: NextConfig = {
         port: '',
         pathname: '/**',
       },
-       {
+      {
         protocol: 'https',
         hostname: 'i.ibb.co',
         port: '',
@@ -34,8 +31,15 @@ const nextConfig: NextConfig = {
         hostname: 'www.logo.wine',
         port: '',
         pathname: '/**',
-      }
+      },
     ],
+  },
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      // Exclude handlebars from client-side bundles
+      config.resolve.alias['handlebars'] = false;
+    }
+    return config;
   },
 };
 
