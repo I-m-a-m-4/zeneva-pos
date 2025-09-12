@@ -1,5 +1,5 @@
 /** @type {import('next').NextConfig} */
-import type { Configuration } from 'webpack';
+import type { Configuration } from '@types/webpack';
 
 const nextConfig = {
   images: {
@@ -38,12 +38,14 @@ const nextConfig = {
   },
   webpack: (config: Configuration, { isServer }: { isServer: boolean }) => {
     if (!isServer) {
+      // Ensure resolve and alias are initialized
+      config.resolve = config.resolve || {};
+      config.resolve.alias = config.resolve.alias || {};
       // Exclude handlebars from client-side bundles
       config.resolve.alias['handlebars'] = false;
     }
     return config;
   },
-  telemetry: false, // Disable Next.js telemetry
 };
 
 export default nextConfig;
