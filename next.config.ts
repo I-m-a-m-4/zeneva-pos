@@ -1,5 +1,5 @@
 /** @type {import('next').NextConfig} */
-import type { Configuration } from '@types/webpack';
+import type { Configuration } from 'webpack';
 
 const nextConfig = {
   images: {
