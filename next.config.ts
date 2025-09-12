@@ -40,7 +40,7 @@ const nextConfig = {
     if (!isServer) {
       // Ensure resolve and alias are initialized
       config.resolve = config.resolve || {};
-      config.resolve.alias = config.resolve.alias || {};
+      config.resolve.alias = config.resolve.alias || {} as Record<string, string | false | string[]>;
       // Exclude handlebars from client-side bundles
       config.resolve.alias['handlebars'] = false;
     }
