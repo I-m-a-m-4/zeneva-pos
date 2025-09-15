@@ -5,18 +5,18 @@
   "description": "Smart POS & Inventory Management for Growing Businesses. Track sales, manage stock, generate reports, and grow with ease.",
   "icons": [
     {
-      "src": "/icons/icon-192x192.png",
+      "src": "/icon.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/icons/icon-384x384.png",
+      "src": "/icon.png",
       "sizes": "384x384",
       "type": "image/png"
     },
     {
-      "src": "/icons/icon-512x512.png",
+      "src": "/icon.png",
       "sizes": "512x512",
       "type": "image/png"
     }

@@ -2,6 +2,7 @@
 "use client";
 
 import *as React from 'react';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import {
   SidebarProvider,
@@ -17,7 +18,6 @@ import {
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import Logo from '@/components/icons/logo';
 import Link from 'next/link';
 import {
   LayoutDashboard, Archive, Settings, ReceiptText, Bell, LogOut, ChevronDown, List, Tags, Percent, ShoppingCart, Globe, Repeat, Landmark, FileText, Users, UserCog, BarChartBig, FileSpreadsheet, Truck, Calculator, Package, Building, Briefcase, Users2, TrendingUp, Palette, ShieldCheck, Search as SearchIcon, FilePlus2, DollarSign, Home, CreditCard, UserPlus, AlertTriangle, CheckCircle2, InfoIcon, Store, Sparkles, Award, MailQuestion, GiftIcon, ActivityIcon, ShieldQuestion, Lightbulb, Loader2, ShieldAlert, Wrench, Moon, Sun
@@ -232,7 +232,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           <Sidebar variant="sidebar" collapsible="icon">
             <SidebarHeader className="p-4 flex items-center gap-2 justify-between">
               <Link href="/dashboard" className="flex items-center gap-2 text-sidebar-foreground hover:text-sidebar-primary transition-colors">
-                <Logo size={28} />
+                <Image src="/icon.png" alt="Zeneva Logo" width={32} height={32} />
                 <span className="text-2xl font-semibold group-data-[collapsible=icon]/sidebar:hidden">Zeneva</span>
               </Link>
             </SidebarHeader>

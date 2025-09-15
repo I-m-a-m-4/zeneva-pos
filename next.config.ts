@@ -3,7 +3,7 @@ import type { Configuration } from 'webpack';
 
 const nextConfig = {
   images: {
-    remotePatterns: [
+   remotePatterns: [
       {
         protocol: 'https',
         hostname: 'placehold.co',

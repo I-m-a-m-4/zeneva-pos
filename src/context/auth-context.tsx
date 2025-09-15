@@ -4,6 +4,7 @@ import * as React from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { getAuth, onAuthStateChanged, signOut, type User } from 'firebase/auth';
 import { doc, getDoc, collection, query, where, getDocs } from 'firebase/firestore';
+import Image from 'next/image';
 import { app, db } from '@/lib/firebase';
 import type {
   AuthContextType,
@@ -17,7 +18,6 @@ import type {
   UserStaff,
 } from '@/types';
 import { Loader2 } from 'lucide-react';
-import Logo from '@/components/icons/logo';
 import { Button } from '@/components/ui/button';
 
 const AuthContext = React.createContext<AuthContextType | undefined>(undefined);
@@ -174,8 +174,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   if (state.status === 'no_business' && !isPublicPath) {
     return (
       <div className="flex flex-col items-center justify-center h-screen bg-background p-6 text-center">
-        <Logo size={48} className="mb-4 text-primary"/>
-        <h2 className="text-2xl font-semibold mb-2">Welcome, {state.user?.displayName || state.user?.email}!</h2>
+<Image src="/icon.png" alt="Zeneva Logo" width={32} height={32} />       
+ <h2 className="text-2xl font-semibold mb-2">Welcome, {state.user?.displayName || state.user?.email}!</h2>
         <p className="text-muted-foreground mb-4">You are not yet associated with any business in Zeneva.</p>
         <p className="text-sm text-muted-foreground mb-6">
           Please contact your administrator to be added to a business, or create a new one if you are the owner.
