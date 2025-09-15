@@ -1,4 +1,3 @@
-
 import type { LucideIcon } from 'lucide-react';
 import type { z } from 'zod';
 import type { ProductTroubleshootInput, ProductTroubleshootOutput } from '@/ai/flows/product-troubleshoot-flow';
@@ -65,9 +64,8 @@ export interface PaymentRecord {
   notes?: string;
 }
 
-
 export interface Alert {
-  id:string;
+  id: string;
   type: 'low_stock' | 'system' | 'promo';
   title: string;
   message: string;
@@ -123,7 +121,6 @@ export interface StaffMember {
 export type UserStaff = StaffMember & { 
   lastLogin?: string; 
 };
-
 
 export interface Customer {
   id: string;
@@ -196,12 +193,10 @@ export interface BusinessSettings {
   paymentInstructions?: string; 
   vendorPolicyEnabled?: boolean;
   vendorPolicyText?: string;
-  
   loyaltyProgramEnabled?: boolean;
   pointsPerUnit?: number;
   loyaltyPointsForReward?: number;
   loyaltyRewardDiscountPercentage?: number;
-  
 }
 
 export interface BusinessInstance {
@@ -223,7 +218,6 @@ export interface BusinessInstance {
   };
 }
 
-
 export interface SubscriptionTier {
   id: string; 
   name: string; 
@@ -239,7 +233,6 @@ export interface SubscriptionTier {
   gradient?: string; 
 }
 
-
 export interface ActivationCode {
   id: string; 
   label: string; 
@@ -252,7 +245,6 @@ export interface ActivationCode {
   usedByEmail?: string;
   expiresAt?: string; 
 }
-
 
 export interface UserProfile { 
   uid: string;
@@ -353,19 +345,19 @@ export interface Expense {
 }
 
 export interface Discount {
-    id: string;
-    name: string;
-    type: 'Percentage' | 'Fixed Amount';
-    value: number;
-    appliesTo: string;
-    status: 'Active' | 'Expired' | 'Scheduled';
-    startDate?: string;
-    endDate?: string;
-    businessId?: string;
-    createdAt?: any;
-    updatedAt?: any;
+  id: string;
+  name: string;
+  type: 'Percentage' | 'Fixed Amount';
+  value: number;
+  appliesTo: string;
+  status: 'Active' | 'Expired' | 'Scheduled';
+  startDate?: string;
+  endDate?: string;
+  businessId?: string;
+  createdAt?: any;
+  updatedAt?: any;
 }
 
 // AI Flow Types
-export { ProductTroubleshootInput, ProductTroubleshootOutput };
-export { BusinessInsightInput, BusinessInsightOutput } from '@/ai/flows/business-insights-flow';
+export type { ProductTroubleshootInput, ProductTroubleshootOutput };
+export type { BusinessInsightInput, BusinessInsightOutput } from '@/ai/flows/business-insights-flow';
