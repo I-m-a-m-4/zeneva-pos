@@ -44,9 +44,14 @@ const nextConfig = {
         ...(Array.isArray(config.resolve.alias) ? {} : config.resolve.alias || {}),
         handlebars: false,
       };
+      // Ensure externals is an array
+      if (!config.externals) {
+        config.externals = [];
+      } else if (!Array.isArray(config.externals)) {
+        config.externals = [config.externals];
+      }
       // Exclude handlebars from client-side bundles
-      config.externals = config.externals || [];
-      config.externals.push('handlebars');
+      (config.externals as any[]).push('handlebars');
     }
     return config;
   },
