@@ -40,11 +40,13 @@ const nextConfig = {
     if (!isServer) {
       // Ensure resolve and alias are initialized
       config.resolve = config.resolve || {};
-      // Explicitly set alias as a record to satisfy TypeScript
       config.resolve.alias = {
         ...(Array.isArray(config.resolve.alias) ? {} : config.resolve.alias || {}),
         handlebars: false,
       };
+      // Exclude handlebars from client-side bundles
+      config.externals = config.externals || [];
+      config.externals.push('handlebars');
     }
     return config;
   },
