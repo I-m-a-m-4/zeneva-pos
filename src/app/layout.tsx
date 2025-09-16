@@ -10,32 +10,12 @@ const jost = Jost({ subsets: ['latin'], variable: '--font-jost' });
 const siteUrl = 'https://zeneva-pos.vercel.app';
 
 export const metadata: Metadata = {
-  metadataBase: new URL(siteUrl),
   title: {
     default: 'Zeneva - Effortless POS & Inventory Control for Business Growth',
     template: '%s | Zeneva',
   },
   description:
     'Zeneva empowers SMEs with effortless POS & Inventory Management. Gain clear insights, streamline operations, and secure profits to grow your business. Explore affordable plans, including a free inventory tier.',
-  keywords: [
-    'Zeneva',
-    'Zeneva POS',
-    'Zeneva Inventory',
-    'pos system',
-    'inventory software',
-    'sme growth tools',
-    'business control software',
-    'retail insights',
-    'affordable pos',
-    'free inventory management software',
-    'business efficiency',
-  ],
-  manifest: '/manifest.json',
-  icons: {
-    icon: { url: '/icon.png', type: 'image/png' },
-    shortcut: '/icon.png',
-    apple: '/icon.png',
-  },
 };
 
 export default function RootLayout({
@@ -43,87 +23,11 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const organizationSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'Organization',
-    name: 'Zeneva Solutions',
-    url: siteUrl,
-    logo: '/icon.png',
-    description:
-      'Provider of Zeneva POS and Inventory Management software for businesses, focusing on effortless control, clear insights, and growth.',
-    contactPoint: {
-      '@type': 'ContactPoint',
-      telephone: '+1-555-010-ZENEVA',
-      contactType: 'Customer Service',
-      availableLanguage: ['English'],
-    },
-    sameAs: [],
-  };
-
-  const websiteSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'WebSite',
-    name: 'Zeneva',
-    url: siteUrl,
-    potentialAction: {
-      '@type': 'SearchAction',
-      target: {
-        '@type': 'EntryPoint',
-        urlTemplate: `${siteUrl}/search?q={search_term_string}`,
-      },
-      'query-input': 'required name=search_term_string',
-    },
-  };
-
-  const softwareApplicationSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'SoftwareApplication',
-    name: 'Zeneva',
-    applicationCategory: ['BusinessApplication', 'SalesSoftware', 'InventoryManagementSoftware'],
-    operatingSystem: 'Web Browser, Progressive Web App (PWA for offline use)',
-    description:
-      'Zeneva is a comprehensive Point of Sale (POS) and Inventory Management software designed for SMEs. It helps streamline operations, manage stock efficiently, and provide clear insights for business growth.',
-    offers: {
-      '@type': 'AggregateOffer',
-      priceCurrency: 'NGN',
-      lowPrice: '0',
-      highPrice: '250000',
-      offerCount: '4',
-      offers: [
-        { '@type': 'Offer', name: 'Free Tier - Inventory Management Software', price: '0', priceCurrency: 'NGN' },
-        { '@type': 'Offer', name: 'Pro Plan', price: '7500', priceCurrency: 'NGN', eligibleDuration: 'P1M' },
-        { '@type': 'Offer', name: 'Lifetime Deal', price: '250000', priceCurrency: 'NGN' },
-        { '@type': 'Offer', name: 'Enterprise Solution (Custom Pricing)' },
-      ],
-    },
-    aggregateRating: {
-      '@type': 'AggregateRating',
-      ratingValue: '4.8',
-      reviewCount: '185',
-    },
-    mainEntityOfPage: siteUrl,
-  };
-
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
         <meta name="theme-color" content="#783ad5" />
-        <link rel="icon" href="/icon.png" type="image/png" />
-        <link rel="shortcut icon" href="/icon.png" type="image/png" />
-        <link rel="apple-touch-icon" href="/icon.png" />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
-        />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
-        />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareApplicationSchema) }}
-        />
       </head>
       <body className={jost.variable}>
         <ThemeProvider
