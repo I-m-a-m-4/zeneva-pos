@@ -37,7 +37,6 @@ const nextConfig: NextConfig = {
     minimumCacheTTL: 60,
   },
   experimental: {
-    optimizeServer: true,
     optimizePackageImports: [], // Disable @vercel/og to prevent /icon error
   },
   webpack: (config: WebpackConfig, { isServer }: { isServer: boolean }) => {
