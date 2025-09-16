@@ -1,5 +1,8 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {
+import type { NextConfig } from 'next';
+import type { Configuration as WebpackConfig } from 'webpack';
+
+const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       {
@@ -29,12 +32,12 @@ const nextConfig = {
       },
     ],
   },
-  webpack: (config, { isServer }) => {
+  webpack: (config: WebpackConfig, { isServer }: { isServer: boolean }) => {
     if (!isServer) {
       config.resolve = config.resolve || {};
       config.resolve.fallback = {
         ...config.resolve.fallback,
-        handlebars: false, // Prevent handlebars in client bundle
+        handlebars: false, // Exclude handlebars from client bundle
       };
     }
     return config;
