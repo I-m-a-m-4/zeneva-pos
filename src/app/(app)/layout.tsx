@@ -49,6 +49,7 @@ const navItemsConfig: (NavItem | NavItemGroup)[] = [
     type: 'group',
     roles: ['admin', 'manager', 'vendor_operator'],
     children: [
+      
       { title: 'Inventory', href: '/inventory', icon: Archive, type: 'item', roles: ['admin', 'manager', 'vendor_operator'] },
       { title: 'Troubleshoot', href: '/inventory/troubleshoot', icon: Wrench, type: 'item', roles: ['admin', 'manager'] },
       { title: 'Product Items', href: '/product-items', icon: List, type: 'item', roles: ['admin', 'manager'] },

@@ -40,9 +40,9 @@ export const metadata: Metadata = {
     siteName: 'Zeneva',
     images: [
       {
-        url: `${siteUrl}/icon.png`,
-        width: 1200,
-        height: 630,
+        url: '/icon.png', // Relative path
+        width: 512, // Adjust to actual dimensions of icon.png
+        height: 512,
         alt: 'Zeneva POS and Inventory Management System Dashboard Preview',
       },
     ],
@@ -52,7 +52,7 @@ export const metadata: Metadata = {
     title: 'Zeneva: Grow Your Business with Effortless POS & Inventory Control',
     description:
       'Manage your SME with Zeneva’s smart POS and inventory tools. Gain clear insights, streamline operations, and focus on growth. Affordable plans available.',
-    images: [`${siteUrl}/twitter-image-zeneva.png`],
+    images: ['/icon.png'], // Fallback to icon.png
   },
   manifest: '/manifest.json',
   icons: {
@@ -72,7 +72,7 @@ export default function RootLayout({
     '@type': 'Organization',
     name: 'Zeneva Solutions',
     url: siteUrl,
-    logo: `${siteUrl}/og-image-zeneva.png`,
+    logo: '/icon.png', // Relative path
     description:
       'Provider of Zeneva POS and Inventory Management software for businesses, focusing on effortless control, clear insights, and growth.',
     contactPoint: {
