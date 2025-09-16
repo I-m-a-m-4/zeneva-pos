@@ -1,0 +1,5 @@
+{
+  "buildCommand": "rm -rf .next && npm run build",
+  "cleanUrls": true,
+  "trailingSlash": false
+}
