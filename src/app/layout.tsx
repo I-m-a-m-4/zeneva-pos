@@ -38,21 +38,14 @@ export const metadata: Metadata = {
     description:
       'Zeneva provides SMEs with intuitive POS and Inventory Management tools to streamline operations, gain valuable insights, and drive sustainable growth. Discover our powerful, affordable solutions.',
     siteName: 'Zeneva',
-    // images: [
-    //   {
-    //     url: '/icon.png',
-    //     width: 512,
-    //     height: 512,
-    //     alt: 'Zeneva POS and Inventory Management System Dashboard Preview',
-    //   },
-    // ],
+    // images: [],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Zeneva: Grow Your Business with Effortless POS & Inventory Control',
     description:
       'Manage your SME with Zeneva’s smart POS and inventory tools. Gain clear insights, streamline operations, and focus on growth. Affordable plans available.',
-    // images: ['/icon.png'],
+    // images: [],
   },
   manifest: '/manifest.json',
   icons: {
@@ -72,7 +65,7 @@ export default function RootLayout({
     '@type': 'Organization',
     name: 'Zeneva Solutions',
     url: siteUrl,
-    logo: '/icon.png', // Use icon.png as fallback
+    logo: '/icon.png',
     description:
       'Provider of Zeneva POS and Inventory Management software for businesses, focusing on effortless control, clear insights, and growth.',
     contactPoint: {

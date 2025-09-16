@@ -37,7 +37,7 @@ const nextConfig: NextConfig = {
       config.resolve = config.resolve || {};
       config.resolve.fallback = {
         ...config.resolve.fallback,
-        handlebars: false, // Exclude handlebars from client bundle
+        handlebars: false,
       };
     }
     return config;
