@@ -30,23 +30,6 @@ export const metadata: Metadata = {
     'free inventory management software',
     'business efficiency',
   ],
-  openGraph: {
-    type: 'website',
-    locale: 'en_US',
-    url: siteUrl,
-    title: 'Zeneva: Effortless Control & Clear Insights for Business Growth',
-    description:
-      'Zeneva provides SMEs with intuitive POS and Inventory Management tools to streamline operations, gain valuable insights, and drive sustainable growth. Discover our powerful, affordable solutions.',
-    siteName: 'Zeneva',
-    // images: [],
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Zeneva: Grow Your Business with Effortless POS & Inventory Control',
-    description:
-      'Manage your SME with Zeneva’s smart POS and inventory tools. Gain clear insights, streamline operations, and focus on growth. Affordable plans available.',
-    // images: [],
-  },
   manifest: '/manifest.json',
   icons: {
     icon: { url: '/icon.png', type: 'image/png' },
