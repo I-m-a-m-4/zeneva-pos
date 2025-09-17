@@ -16,6 +16,12 @@ export const metadata: Metadata = {
   },
   description:
     'Zeneva empowers SMEs with effortless POS & Inventory Management. Gain clear insights, streamline operations, and secure profits to grow your business. Explore affordable plans, including a free inventory tier.',
+  // ✅ This forces Next.js/Vercel to use your static favicon
+  icons: {
+    icon: '/icon.png',
+    shortcut: '/icon.png',
+    apple: '/icon.png',
+  },
 };
 
 export default function RootLayout({
@@ -31,8 +37,6 @@ export default function RootLayout({
           content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
         />
         <meta name="theme-color" content="#783ad5" />
-        {/* ✅ Tell Next.js/Vercel to just use your static favicon */}
-        <link rel="icon" href="/icon.png" sizes="any" />
       </head>
       <body className={jost.variable}>
         <ThemeProvider
