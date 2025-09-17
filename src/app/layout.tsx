@@ -26,8 +26,13 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+        <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+        />
         <meta name="theme-color" content="#783ad5" />
+        {/* ✅ Tell Next.js/Vercel to just use your static favicon */}
+        <link rel="icon" href="/icon.png" sizes="any" />
       </head>
       <body className={jost.variable}>
         <ThemeProvider
